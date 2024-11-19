@@ -21,8 +21,16 @@ def main():
     notion_creds = auth_manager.get_credentials("Notion", "credential")
     NOTION_API_KEY = notion_creds['credential']
 
-    # Create an instance of NotionManager and update the cover image
-    install_db = NotionManager(NOTION_API_KEY, DATABASE_ID)
+    # Define the filter to only get entries where "Fresh macOS Install" is non-empty
+    filter_condition = {
+        "property": "Fresh macOS Install",
+        "number": {
+            "is_not_empty": True
+        }
+    }
+
+    # Create an instance of NotionManager with the filter passed as kwargs
+    install_db = NotionManager(NOTION_API_KEY, DATABASE_ID, filter=filter_condition)
     install_db.update_cover_image(cover_url=image_url)
 
 if __name__ == "__main__":
