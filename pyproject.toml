@@ -11,6 +11,7 @@ python = "^3.12"
 requests = "^2.32.3"
 oauthmanager = "^0.1.1"
 notion-client = "^2.2.1"
+prefect = "^3.1.5"
 
 
 [build-system]
