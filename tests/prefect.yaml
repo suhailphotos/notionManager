@@ -1,0 +1,47 @@
+# Welcome to your prefect.yaml file! You can use this file for storing and managing
+# configuration for deploying your flows. We recommend committing this file to source
+# control along with your flow code.
+
+# Generic metadata about this project
+name: tests
+prefect-version: 3.1.5
+
+# build section allows you to manage and build docker images
+build:
+
+# push section allows you to manage if and how this project is uploaded to remote locations
+push:
+
+# pull section allows you to provide instructions for cloning this project in remote locations
+pull:
+- prefect.deployments.steps.set_working_directory:
+    directory: /Users/suhail/Library/CloudStorage/Dropbox/matrix/packages/notionUtils/tests
+
+# the deployments section allows you to provide configuration for deploying flows
+deployments:
+- name: gpu_check
+  version:
+  tags: []
+  concurrency_limit:
+  description:
+  entrypoint: gpu_check_flow.py:gpu_check_flow
+  parameters: {}
+  work_pool:
+    name: gpu-agent-pool
+    work_queue_name:
+    job_variables: {}
+  enforce_parameter_schema: true
+  schedules: []
+- name: test_gpu
+  version:
+  tags: []
+  concurrency_limit:
+  description:
+  entrypoint: gpu_test_flow.py:gpu_test_flow
+  parameters: {}
+  work_pool:
+    name: gpu-agent-pool
+    work_queue_name:
+    job_variables: {}
+  enforce_parameter_schema: true
+  schedules: []
