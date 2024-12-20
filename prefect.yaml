@@ -7,10 +7,10 @@ name: notionUtils
 prefect-version: 3.1.5
 
 # build section allows you to manage and build docker images
-build: null
+build:
 
 # push section allows you to manage if and how this project is uploaded to remote locations
-push: null
+push:
 
 # pull section allows you to provide instructions for cloning this project in remote locations
 pull:
@@ -21,15 +21,28 @@ pull:
 # the deployments section allows you to provide configuration for deploying flows
 deployments:
 - name: GPU_Test_Deployment
-  version: null
+  version:
   tags: []
-  concurrency_limit: null
-  description: null
+  concurrency_limit:
+  description:
   entrypoint: tests/test_gpu_flow.py:test_gpu_flow
   parameters: {}
   work_pool:
     name: gpu-agent-pool
-    work_queue_name: null
+    work_queue_name:
+    job_variables: {}
+  enforce_parameter_schema: true
+  schedules: []
+- name: hello_world
+  version:
+  tags: []
+  concurrency_limit:
+  description:
+  entrypoint: tests/hello_world_flow.py:hello_world_flow
+  parameters: {}
+  work_pool:
+    name: default-agent-pool
+    work_queue_name:
     job_variables: {}
   enforce_parameter_schema: true
   schedules: []
