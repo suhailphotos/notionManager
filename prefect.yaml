@@ -63,3 +63,16 @@ deployments:
     anchor_date: '2024-12-20T04:00:10.996540+00:00'
     timezone: UTC
     active: true
+- name: debug_file_name
+  version:
+  tags: []
+  concurrency_limit:
+  description:
+  entrypoint: tests/hello_world_debug.py:hello_world_debug_flow
+  parameters: {}
+  work_pool:
+    name: default-agent-pool
+    work_queue_name:
+    job_variables: {}
+  enforce_parameter_schema: true
+  schedules: []
