@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 128 128"
+   version="1.1"
+   id="svg5"
+   sodipodi:docname="Pandas.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs5" />
+  <sodipodi:namedview
+     id="namedview5"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="5.9375"
+     inkscape:cx="64"
+     inkscape:cy="63.915789"
+     inkscape:window-width="1392"
+     inkscape:window-height="1212"
+     inkscape:window-x="834"
+     inkscape:window-y="1284"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg5" />
+  <path
+     style="-inkscape-stroke:none;fill:#808080"
+     d="M48.697 15.176h12.25v25.437h-12.25zm0 52.251h12.25v25.436h-12.25z"
+     color="#000"
+     fill="#130754"
+     id="path1" />
+  <path
+     style="-inkscape-stroke:none;fill:#808080"
+     d="M48.697 48.037h12.25v12.001h-12.25z"
+     color="#000"
+     fill="#ffca00"
+     id="path2" />
+  <path
+     style="-inkscape-stroke:none;fill:#808080"
+     d="M29.017 36.087h12.25v84.552h-12.25zM67.97 88.414h12.25v25.436H67.97zm0-52.297h12.25v25.437H67.97z"
+     color="#000"
+     fill="#130754"
+     id="path3" />
+  <path
+     style="-inkscape-stroke:none;fill:#808080"
+     d="M67.97 68.983h12.25v12.001H67.97z"
+     color="#000"
+     fill="#e70488"
+     id="path4" />
+  <path
+     style="-inkscape-stroke:none;fill:#808080"
+     d="M87.238 8.55h12.25v84.552h-12.25z"
+     color="#000"
+     fill="#130754"
+     id="path5" />
+</svg>
