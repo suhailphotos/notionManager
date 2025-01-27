@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="409.289 277.787 1024 1024"
+   width="1024"
+   height="1024"
+   version="1.1"
+   id="svg10"
+   sodipodi:docname="YouTube.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs10" />
+  <sodipodi:namedview
+     id="namedview10"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.26240291"
+     inkscape:cx="434.44641"
+     inkscape:cy="638.33134"
+     inkscape:window-width="1392"
+     inkscape:window-height="1212"
+     inkscape:window-x="631"
+     inkscape:window-y="1275"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="g2" />
+  <g
+     viewBox="0 0 90 20"
+     preserveAspectRatio="xMidYMid meet"
+     class="style-scope yt-icon"
+     transform="matrix(5.715038,0,0,5.715038,409.28876,277.78723)"
+     id="g10">
+    <g
+       class="style-scope yt-icon"
+       id="g2">
+      <path
+         id="path1"
+         style="stroke-width:6.27484;fill:#808080"
+         class="style-scope yt-icon"
+         d="M 89.636093 26.673011 C 89.636093 26.673011 33.573041 26.672978 19.597804 30.421345 C 11.879764 32.487377 5.8144081 38.55267 3.7483767 46.270772 C 8.5069561e-06 60.245947 4.1994471e-05 89.421391 4.1994471e-05 89.421391 C 4.1994471e-05 89.421391 8.5069561e-06 118.59671 3.7483767 132.57201 C 5.8144081 140.29005 11.879764 146.35543 19.597804 148.42109 C 33.573041 152.16968 89.636093 152.16977 89.636093 152.16977 C 89.636093 152.16977 145.69972 152.16968 159.67438 148.42109 C 167.39242 146.35543 173.45847 140.29005 175.52415 132.57201 C 179.27274 118.59671 179.27283 89.421391 179.27283 89.421391 C 179.27283 89.421391 179.25764 60.245947 175.52415 46.270772 C 173.45847 38.55267 167.39242 32.487377 159.67438 30.421345 C 145.69972 26.672978 89.636093 26.673011 89.636093 26.673011 z M 71.691727 62.53577 L 118.26636 89.423783 L 71.691727 116.31145 L 71.691727 62.53577 z " />
+    </g>
+  </g>
+</svg>
