@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "notionutils"
+name = "notionmanager"
 version = "0.1.0"
 description = ""
 authors = ["Suhail <suhailece@gmail.com>"]
