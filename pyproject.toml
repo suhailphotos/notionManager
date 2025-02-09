@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "notionutils", from = "src"}]
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.11"
 requests = "^2.32.3"
 oauthmanager = "^0.1.1"
 notion-client = "^2.2.1"
