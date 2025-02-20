@@ -51,7 +51,7 @@ deployments:
   tags: []
   concurrency_limit:
   description: Flow to execute the keep-alive task.
-  entrypoint: src/notionutils/prefect/keep_alive_flow.py:supabase_keep_alive_flow
+  entrypoint: notionmanager.prefect.keep_alive_flow:supabase_keep_alive_flow
   parameters: {}
   work_pool:
     name: default-agent-pool
