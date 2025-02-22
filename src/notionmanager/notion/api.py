@@ -4,8 +4,9 @@ class NotionAPI:
     BASE_URL = "https://api.notion.com/v1/"
 
     def __init__(self, api_key, version="2022-06-28"):
+        self.api_key = api_key  # Store API key for authentication
         self.headers = {
-            "Authorization": f"Bearer {api_key}",
+            "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
             "Notion-Version": version,
         }
@@ -34,6 +35,13 @@ class NotionAPI:
     def get_database(self, database_id):
         """Retrieve database schema and properties."""
         url = f"{self.BASE_URL}databases/{database_id}"
+        response = requests.get(url, headers=self.headers)
+        response.raise_for_status()
+        return response.json()
+
+    def get_page(self, page_id):
+        """Fetch a single Notion page by its ID."""
+        url = f"{self.BASE_URL}pages/{page_id}"
         response = requests.get(url, headers=self.headers)
         response.raise_for_status()
         return response.json()
