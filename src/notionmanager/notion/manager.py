@@ -25,6 +25,29 @@ class NotionManager:
         """
         return self.api.get_page(page_id)
 
+    def get_page_by_name(self, page_name: str, title_property: str = "Name") -> dict:
+        """
+        Fetch a Notion page by its title from the database using a filter.
+        
+        Parameters:
+            page_name (str): The title of the page to retrieve.
+            title_property (str, optional): The property name for the title field. Defaults to "Name".
+        
+        Returns:
+            dict: The first matching page's details if found; otherwise, None.
+        """
+        payload = {
+            "filter": {
+                "property": title_property,
+                "title": {
+                    "equals": page_name
+                }
+            }
+        }
+        response = self.api.query_database(self.database_id, payload=payload)
+        results = response.get("results", [])
+        return results[0] if results else None
+
     def get_pages(self, num_pages=None, retrieve_all=False, **kwargs):
         """
         Fetch pages from the database with optional pagination.
@@ -74,13 +97,25 @@ class NotionManager:
 
         return self.title_property_name
 
-    def add_page(self, properties):
-        """Add a new page to the Notion database."""
-        payload = {
-            "parent": {"database_id": self.database_id},
-            "properties": properties,
-        }
-        return self.api.create_page(payload)
+    def add_page(self, notion_payload: dict):
+        """
+        Create a new Notion page by passing the final JSON payload to the API.
+
+        Expected keys might include:
+          "parent":       { "database_id": <your DB> }
+          "properties":   { ... }
+          "cover":        { ... }
+          "icon":         { ... }
+          etc.
+
+        If the user does *not* provide a "parent", we default
+        to using self.database_id as the parent database.
+        """
+        if "parent" not in notion_payload:
+            notion_payload["parent"] = {"database_id": self.database_id}
+
+        return self.api.create_page(notion_payload)
+
 
     def update_page(self, page_id, properties):
         """Update a page in the Notion database."""
@@ -91,6 +126,7 @@ class NotionManager:
 if __name__ == "__main__":
     from oauthmanager import OnePasswordAuthManager
     import json
+    from notionmanager.notion.api import NotionAPI  # Ensure NotionManager is imported or defined
 
     # Retrieve Notion API key using OnePasswordAuthManager
     auth_manager = OnePasswordAuthManager(vault_name="API Keys")
@@ -98,30 +134,14 @@ if __name__ == "__main__":
     NOTION_API_KEY = notion_creds.get("credential")
 
     # Notion Database ID
-    DATABASE_ID = "16aa1865b187810cbb34e07ffd6b40b8"
+    DATABASE_ID = "195a1865-b187-8103-9b6a-cc752ca45874"
 
     if NOTION_API_KEY:
         # Initialize NotionManager
         manager = NotionManager(api_key=NOTION_API_KEY, database_id=DATABASE_ID)
+        page_title = "My new fun course"
+        page_details = manager.get_page_by_name(page_title, title_property="Name")
+        # Pretty-print the JSON output
+        print(json.dumps(page_details, indent=2))
+    
 
-        # Fetch limited pages
-        print("\n--- Fetching Limited Pages (5) ---")
-        limited_pages = manager.get_pages(num_pages=5, retrieve_all=False)
-
-        if limited_pages:
-            print(f"Fetched {len(limited_pages)} pages.")
-
-            # Test fetching a single page by ID
-            first_page_id = limited_pages[0]["id"]
-            print(f"\n--- Fetching Details for Page ID: {first_page_id} ---")
-            page_details = manager.get_page(first_page_id)
-
-            if page_details:
-                print(json.dumps(page_details, indent=2))  # Pretty print the page details
-            else:
-                print("Failed to retrieve page details.")
-        else:
-            print("No pages retrieved.")
-
-    else:
-        print("Failed to retrieve Notion API key from OnePassword.")
