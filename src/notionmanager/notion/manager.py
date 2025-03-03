@@ -25,29 +25,6 @@ class NotionManager:
         """
         return self.api.get_page(page_id)
 
-    def get_page_by_name(self, page_name: str, title_property: str = "Name") -> dict:
-        """
-        Fetch a Notion page by its title from the database using a filter.
-        
-        Parameters:
-            page_name (str): The title of the page to retrieve.
-            title_property (str, optional): The property name for the title field. Defaults to "Name".
-        
-        Returns:
-            dict: The first matching page's details if found; otherwise, None.
-        """
-        payload = {
-            "filter": {
-                "property": title_property,
-                "title": {
-                    "equals": page_name
-                }
-            }
-        }
-        response = self.api.query_database(self.database_id, payload=payload)
-        results = response.get("results", [])
-        return results[0] if results else None
-
     def get_pages(self, num_pages=None, retrieve_all=False, **kwargs):
         """
         Fetch pages from the database with optional pagination.
