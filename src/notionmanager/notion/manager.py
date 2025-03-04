@@ -275,6 +275,146 @@ class NotionManager:
         root_key = hierarchy.get("root", "root")
         return {root_key: roots}
 
+    def build_notion_payload(self, flat_object, mapping, parent_database_id=None):
+        """
+        Build a Notion page payload from a single processed (flat) object.
+
+        Parameters:
+          - flat_object (dict): The processed object (e.g. a course, chapter, or lesson).
+          - mapping (dict): The mapping configuration for back-transformation. For example:
+                {
+                  "icon": {"target": "icon", "return": "object"},
+                  "cover": {"target": "cover", "return": "object"},
+                  "name": {"target": "Name", "type": "title", "return": "str"},
+                  "tool": {"target": "Tool", "type": "relation", "return": "list", "property_id": "pvso"},
+                  "type": {"target": "Type", "type": "select", "return": "list", "property_id": "DCuB"},
+                  "description": {"target": "Course Description", "type": "rich_text", "return": "str", "property_id": "XQwN"},
+                  "link": {"target": "Course Link", "type": "url", "return": "str", "property_id": "O%3AZR"},
+                  "path": {"target": "Path", "type": "rich_text", "return": "str", "property_id": "%3Eua%3C", "code": True},
+                  "template": {"target": "Template", "type": "rich_text", "return": "str", "property_id": "NBdS", "code": True},
+                  "tags": {"target": "Tags", "type": "multi_select", "return": "list", "property_id": "tWcF"}
+                }
+          - parent_database_id (str or None): The database ID for the page's parent.
+            If None, self.database_id is used.
+
+        Returns:
+          dict: A dictionary representing the Notion page payload.
+        """
+        payload = {"object": "page"}
+        parent_db = parent_database_id if parent_database_id else self.database_id
+        payload["parent"] = {"type": "database_id", "database_id": parent_db}
+
+        # Process cover and icon separately.
+        if "cover" in flat_object and flat_object["cover"]:
+            cover_val = flat_object["cover"]
+            if isinstance(cover_val, dict) and cover_val.get("type") == "external":
+                cover_url = cover_val.get("external", {}).get("url")
+            else:
+                cover_url = cover_val
+            if cover_url:
+                payload["cover"] = {"type": "external", "external": {"url": cover_url}}
+        if "icon" in flat_object and flat_object["icon"]:
+            icon_val = flat_object["icon"]
+            if isinstance(icon_val, dict) and icon_val.get("type") == "external":
+                icon_url = icon_val.get("external", {}).get("url")
+            else:
+                icon_url = icon_val
+            if icon_url:
+                payload["icon"] = {"type": "external", "external": {"url": icon_url}}
+
+        # Build properties.
+        props = {}
+        for flat_key, conf in mapping.items():
+            # Skip icon and cover so they don't get repeated in the properties.
+            if flat_key in ("icon", "cover"):
+                continue
+
+            notion_prop = conf.get("target")
+            prop_type = conf.get("type")
+            ret_type = conf.get("return")
+            property_id = conf.get("property_id")
+            code_flag = conf.get("code", False)
+            value = flat_object.get(flat_key)
+            if value is None:
+                continue  # Skip missing properties.
+            # For "object" types, copy the value as is.
+            if ret_type == "object":
+                prop_payload = value
+            elif prop_type in ("rich_text", "title"):
+                text_item = {
+                    "type": "text",
+                    "text": {"content": value, "link": None},
+                    "annotations": {
+                        "bold": False,
+                        "italic": False,
+                        "strikethrough": False,
+                        "underline": False,
+                        "code": code_flag,
+                        "color": "default"
+                    },
+                    "plain_text": value,
+                    "href": None
+                }
+                if prop_type == "title":
+                    prop_payload = {"type": "title", "title": [text_item]}
+                else:
+                    prop_payload = {"type": "rich_text", "rich_text": [text_item]}
+                if property_id:
+                    prop_payload["id"] = property_id
+            elif prop_type == "url":
+                prop_payload = {"type": "url", "url": value}
+                if property_id:
+                    prop_payload["id"] = property_id
+            elif prop_type == "relation":
+                relations = []
+                if isinstance(value, list):
+                    for rel in value:
+                        if rel:
+                            relations.append({"id": rel})
+                else:
+                    relations.append({"id": value})
+                prop_payload = {"type": "relation", "relation": relations}
+                if property_id:
+                    prop_payload["id"] = property_id
+            elif prop_type == "select":
+                select_name = value[0] if isinstance(value, list) and value else value
+                prop_payload = {"type": "select", "select": {"name": select_name} if select_name else None}
+                if property_id:
+                    prop_payload["id"] = property_id
+            elif prop_type == "multi_select":
+                multi = []
+                if isinstance(value, list):
+                    for item in value:
+                        multi.append({"name": item})
+                else:
+                    multi.append({"name": value})
+                prop_payload = {"type": "multi_select", "multi_select": multi}
+                if property_id:
+                    prop_payload["id"] = property_id
+            else:
+                # Fallback to rich_text.
+                text_item = {
+                    "type": "text",
+                    "text": {"content": str(value), "link": None},
+                    "annotations": {
+                        "bold": False,
+                        "italic": False,
+                        "strikethrough": False,
+                        "underline": False,
+                        "code": code_flag,
+                        "color": "default"
+                    },
+                    "plain_text": str(value),
+                    "href": None
+                }
+                prop_payload = {"type": "rich_text", "rich_text": [text_item]}
+                if property_id:
+                    prop_payload["id"] = property_id
+            props[notion_prop] = prop_payload
+
+        payload["properties"] = props
+        return payload
+
 
 if __name__ == "__main__":
     from oauthmanager import OnePasswordAuthManager
@@ -309,7 +449,7 @@ if __name__ == "__main__":
             "level_2": "lessons"       # Children of chapters are lessons (level 2)
         }
 
-        # Example properties mapping.
+        # Example properties mapping for forward transformation.
         properties_mapping = {
             "id": {"target": "id", "return": "str"},
             "icon": {"target": "icon", "return": "object"},
@@ -324,16 +464,29 @@ if __name__ == "__main__":
             "Tags": {"target": "tags", "type": "multi_select", "return": "list"}
         }
 
+        # Example back-transformation mapping.
+        back_mapping = {
+            "icon": {"target": "icon", "return": "object"},
+            "cover": {"target": "cover", "return": "object"},
+            "name": {"target": "Name", "type": "title", "return": "str"},
+            "tool": {"target": "Tool", "type": "relation", "return": "list", "property_id": "pvso"},
+            "type": {"target": "Type", "type": "select", "return": "list", "property_id": "DCuB"},
+            "description": {"target": "Course Description", "type": "rich_text", "return": "str", "property_id": "XQwN"},
+            "link": {"target": "Course Link", "type": "url", "return": "str", "property_id": "O%3AZR"},
+            "path": {"target": "Path", "type": "rich_text", "return": "str", "property_id": "%3Eua%3C", "code": True},
+            "template": {"target": "Template", "type": "rich_text", "return": "str", "property_id": "NBdS", "code": True},
+            "tags": {"target": "Tags", "type": "multi_select", "return": "list", "property_id": "tWcF"}
+        }
+
         # Retrieve pages based on the filter.
         course_pages = manager.get_pages(**filter)
         if course_pages:
-            # Transform multiple pages for testing.
-            transformed_pages = manager.transform_pages(course_pages, properties_mapping)
-            # Build the nested hierarchy.
-            nested = manager.build_hierarchy(course_pages, hierarchy_config, properties_mapping)
-            print("Transformed Pages:")
-            print(json.dumps(transformed_pages, indent=2))
-            print("\nNested Hierarchy:")
-            print(json.dumps(nested, indent=2))
+            # For demonstration, transform the first page and then rebuild the Notion payload.
+            transformed_page = manager.transform_page(course_pages[0], properties_mapping)
+            notion_payload = manager.build_notion_payload(transformed_page, back_mapping)
+            print("Transformed Page:")
+            print(json.dumps(transformed_page, indent=2))
+            print("\nNotion Payload:")
+            print(json.dumps(notion_payload, indent=2))
         else:
             print("No pages retrieved.")
