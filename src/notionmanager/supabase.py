@@ -44,11 +44,4 @@ if __name__ == "__main__":
         # Example usage
         env_file_path = "/opt/prefect/.env"  # Pass this path when using in Prefect
         client = SupabaseClient(env_path=env_file_path)
-        print("Successfully connected to Supabase.")
 
-        # Test the keep_alive method
-        print("Calling keep_alive...")
-        result = client.keep_alive()
-        print("Keep-alive successful:", result)
-    except Exception as e:
-        print(f"Error: {e}")

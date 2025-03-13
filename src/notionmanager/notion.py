@@ -1,5 +1,5 @@
 import json
-from notionmanager.notion.api import NotionAPI
+from notionmanager.api import NotionAPI
 
 class NotionManager:
     def __init__(self, api_key, database_id):

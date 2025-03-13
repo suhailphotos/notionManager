@@ -1,5 +1,5 @@
 from prefect import flow, task, get_run_logger
-from notionmanager.supabase.client import SupabaseClient
+from notionmanager.supabase import SupabaseClient
 
 @task
 def keep_supabase_active(env_path: str = "/opt/prefect/.env"):
