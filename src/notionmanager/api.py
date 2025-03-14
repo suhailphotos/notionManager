@@ -44,4 +44,5 @@ class NotionAPI:
         url = f"{self.BASE_URL}pages/{page_id}"
         response = requests.get(url, headers=self.headers)
         response.raise_for_status()
+        return response.json()  # Return the response
 

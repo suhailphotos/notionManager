@@ -1,0 +1,200 @@
+{
+    "parent_page": [
+        {
+            "url": "https://www.notion.so/CodeBase-175a1865b1878060a675d400cffc6268?pvs=4",
+            "id": "175a1865-b187-8060-a675-d400cffc6268",
+            "databases": [
+                {
+                    "id": "175a1865-b187-8101-89ab-fd5ae9d87370",
+                    "name": "Libraries"
+                },
+                {
+                    "id": "175a1865-b187-8122-aad4-d7c05de1cd15",
+                    "name": "ClassFunctions"
+                },
+                {
+                    "id": "170a1865-b187-8119-ad1d-ccc16034e0ab",
+                    "name": "VEX Reference"
+                },
+                {
+                    "id": "169a1865-b187-8167-81f5-fdda776f2032",
+                    "name": "Syntax"
+                },
+                {
+                    "id": "147a1865-b187-80a1-aca7-c38c806d28a3",
+                    "name": "SQL Queries"
+                },
+                {
+                    "id": "13da1865-b187-8005-8f89-fd392d13ce07",
+                    "name": "Shell Scripts"
+                }
+            ]
+        },
+        {
+            "url": "https://www.notion.so/Reference-16da1865b1878049ae3acec5227928b2?pvs=4",
+            "id": "16da1865-b187-8049-ae3a-cec5227928b2",
+            "databases": [
+                {
+                    "id": "13ba1865-b187-800a-b2c4-db0e909c4e76",
+                    "name": "Algorithms"
+                },
+                {
+                    "id": "139a1865-b187-81c9-a74e-d8667f0e762d",
+                    "name": "Commands"
+                },
+                {
+                    "id": "172a1865-b187-8156-b1ea-fb1618f589fd",
+                    "name": "Node Type"
+                },
+                {
+                    "id": "16da1865-b187-81ca-a047-f3bd0006d74b",
+                    "name": "Nodes"
+                }
+            ]
+        },
+        {
+            "url": "https://www.notion.so/Codex-16da1865b1878006a3dacebdf3cdcaca?pvs=4",
+            "id": "16da1865-b187-8006-a3da-cebdf3cdcaca",
+            "databases": [
+                {
+                    "id": "167a1865-b187-819e-a07a-d1f78b54fa88",
+                    "name": "Knowledgebase"
+                },
+                {
+                    "id": "167a1865-b187-8135-abff-db7c1789e169",
+                    "name": "Resources"
+                },
+                {
+                    "id": "16da1865-b187-8144-9eb2-f82249ca3b8f",
+                    "name": "Best Practices"
+                }
+            ]
+        },
+        {
+            "url": "https://www.notion.so/Workflows-16da1865b18780ba83c1e1c0369c369c?pvs=4",
+            "id": "16da1865-b187-80ba-83c1-e1c0369c369c",
+            "databases": [
+                {
+                    "id": "13ea1865-b187-800a-ba2b-f0814cec24e5",
+                    "name": "Flows"
+                },
+                {
+                    "id": "16aa1865-b187-810c-bb34-e07ffd6b40b8",
+                    "name": "Playbook"
+                },
+                {
+                    "id": "14ba1865-b187-80c2-ba54-e48447f06bcb",
+                    "name": "Projects"
+                },
+                {
+                    "id": "155a1865-b187-8034-beed-e508cf036e3b",
+                    "name": "Project Type"
+                },
+                {
+                    "id": "14aa1865-b187-80cd-b4ac-ebb379bccfee",
+                    "name": "File Type"
+                },
+                {
+                    "id": "14ba1865-b187-801b-b055-f39c5c53a4d9",
+                    "name": "Files"
+                },
+                {
+                    "id": "195a1865-b187-8103-9b6a-cc752ca45874",
+                    "name": "Courses"
+                }
+            ]
+        },
+        {
+            "url": "https://www.notion.so/Tools-16da1865b18780f58f81ff78c2ca6ebd?pvs=4",
+            "id": "16da1865-b187-80f5-8f81-ff78c2ca6ebd",
+            "databases": [
+                {
+                    "id": "13da1865-b187-806b-bc96-c179573253a4",
+                    "name": "Tools & Technologies"
+                },
+                {
+                    "id": "16ba1865-b187-81d7-9963-f0b1b0069df0",
+                    "name": "Key Mappings"
+                }
+            ]
+        },
+        {
+            "url": "https://www.notion.so/Systems-16da1865b18780de97d8d383c64f15fb?pvs=4",
+            "id": "16da1865-b187-80de-97d8-d383c64f15fb",
+            "databases": [
+                {
+                    "id": "139a1865-b187-80d1-910d-ee1a006e422e",
+                    "name": "Machines"
+                },
+                {
+                    "id": "13ba1865-b187-80ef-83ec-d5a8aa96162e",
+                    "name": "Operating Systems"
+                },
+                {
+                    "id": "167a1865-b187-8107-b2ae-ece4c5113fbd",
+                    "name": "VLANs"
+                },
+                {
+                    "id": "167a1865-b187-8134-926d-da9c9834c612",
+                    "name": "IP Addresses"
+                },
+                {
+                    "id": "139a1865-b187-806a-ade0-c440dbb4b3e9",
+                    "name": "Storage"
+                },
+                {
+                    "id": "139a1865-b187-81eb-b6fe-c0e328f785d8",
+                    "name": "Hardware"
+                },
+                {
+                    "id": "139a1865-b187-81d8-a4b8-f1d98f9f3b7d",
+                    "name": "Components"
+                },
+                {
+                    "id": "140a1865-b187-807f-9267-dcbfaa43d9fd",
+                    "name": "Names"
+                }
+            ]
+        },
+        {
+            "url": "https://www.notion.so/Visuals-16da1865b18780b1acdbd323a7386399?pvs=4",
+            "id": "16da1865-b187-80b1-acdb-d323a7386399",
+            "databases": [
+                {
+                    "id": "14ea1865-b187-8014-80de-e85bc51967f6",
+                    "name": "Icons"
+                },
+                {
+                    "id": "154a1865-b187-8082-9bd2-c4349fb0c736",
+                    "name": "Cover Images"
+                }
+            ]
+        },
+        {
+            "url": "https://www.notion.so/Life-16da1865b1878008b6b8d6351087cc81?pvs=4",
+            "id": "16da1865-b187-8008-b6b8-d6351087cc81",
+            "databases": [
+                {
+                    "id": "163a1865-b187-80c5-9a41-c64142efff5e",
+                    "name": "Home"
+                },
+                {
+                    "id": "168a1865-b187-8155-b1af-d2d68af063d7",
+                    "name": "Notes & Ideas"
+                },
+                {
+                    "id": "168a1865-b187-816d-9e47-d8b397e05797",
+                    "name": "Shopping List"
+                },
+                {
+                    "id": "9c21e8a6-7fab-48d2-87ba-1b8430c643e6",
+                    "name": "Travel Plans"
+                },
+                {
+                    "id": "187a1865-b187-816a-a213-c7a6d8e29b3f",
+                    "name": "Bookmarks"
+                }
+            ]
+        }
+    ]
+}

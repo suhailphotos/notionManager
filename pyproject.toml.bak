@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "notionmanager"
+version = "0.1.9"
+description = "A Python package for managing courses, projects, and directories with Notion integration."
+authors = ["Suhail <suhailece@gmail.com>"]
+readme = "README.md"
+packages = [{include = "notionmanager", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+requests = "^2.32.3"
+oauthmanager = "^0.1.1"
+notion-client = "^2.2.1"
+prefect = {extras = ["github"], version = "^3.1.5"}
+supabase = "^2.10.0"
+python-dotenv = "^1.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
