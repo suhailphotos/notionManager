@@ -101,7 +101,6 @@ def read_file_content(file_path):
         return file.read()
 
 
-
 def get_databases_for_pages(notion, json_file_path):
     """
     Queries Notion API for all database-type objects under each page, including those nested
@@ -156,6 +155,7 @@ def get_databases_for_pages(notion, json_file_path):
         json.dump(data, file, indent=4)
 
     print(f"📂 Updated Notion database list in {json_file_path}")
+
 
 def insert_code_to_notion(notion, database_id, csv_file_path):
     """Inserts code content as a code block into Notion pages."""
@@ -233,15 +233,14 @@ def save_pages_to_pickle(file_path, data):
 
 def update_json_with_pages(notion, json_file_path, output_file_path, pickle_file_path):
     """
-    1. Queries all pages for each database in the Notion structure.
-    2. Saves a full backup of the retrieved data (pickle file).
-    3. Updates the JSON structure to include pages under each database.
+    Fetches all pages for each database, handles rate limits,
+    saves full data to a pickle file, and updates JSON structure.
     """
     # Read JSON file
     with open(json_file_path, "r") as file:
         data = json.load(file)
 
-    all_pages_data = {}  # Store raw data for pickling
+    all_pages_data = {}  # Store raw page data
 
     for page in data.get("parent_page", []):
         for database in page.get("databases", []):
@@ -251,10 +250,10 @@ def update_json_with_pages(notion, json_file_path, output_file_path, pickle_file
                 print(f"📦 Fetching pages for database: {database['name']} ({database_id})...")
                 pages = fetch_all_pages(notion, database_id)
                 
-                # Store full page data for future reference
+                # Store raw page data for future reference
                 all_pages_data[database_id] = pages  
 
-                # Extract only necessary data for JSON output
+                # Extract only page_id and cover for JSON
                 database["pages"] = [
                     {
                         "page_id": page["id"],
@@ -267,6 +266,15 @@ def update_json_with_pages(notion, json_file_path, output_file_path, pickle_file
 
             except Exception as e:
                 print(f"❌ Failed to fetch pages for database {database_id}: {e}")
+
+    # Save raw data to a pickle file
+    save_pages_to_pickle(pickle_file_path, all_pages_data)
+
+    # Write updated JSON back to file
+    with open(output_file_path, "w") as file:
+        json.dump(data, file, indent=4)
+
+    print(f"📂 Updated JSON saved to {output_file_path}")
 
 def extract_unique_covers(json_file_path, csv_output_path, json_output_path):
     """
