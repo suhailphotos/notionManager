@@ -442,6 +442,24 @@ if __name__ == '__main__':
 
     # extract_unique_covers(updated_json_file_path, csv_output_path, json_output_path)
 
-    move_unused_banner_files(cover_file_path, banner_folder, archive_folder)
+    # move_unused_banner_files(cover_file_path, banner_folder, archive_folder)
 
-
+    def rename_notion_banners(directory):
+        """
+        Renames files in the specified directory from 'Notion_Style_Banners_[lgt_XX].jpg'
+        to 'notion_XX.jpg'.
+        """
+        pattern = re.compile(r"Notion_Style_Banners_\[lgt_(\d+)\]\.jpg")
+    
+        for filename in os.listdir(directory):
+            match = pattern.match(filename)
+            if match:
+                new_name = f"notion_{int(match.group(1)):02d}.jpg"
+                old_path = os.path.join(directory, filename)
+                new_path = os.path.join(directory, new_name)
+                os.rename(old_path, new_path)
+                print(f"Renamed: {filename} → {new_name}")
+    
+    # Usage Example
+    directory = "/Users/suhail/Desktop"  # Adjust if necessary
+    rename_notion_banners(directory)
