@@ -1,0 +1,864 @@
+{
+    "files": [
+        {
+            "old_file_name": "json_banner.jpg",
+            "new_file_name": "json.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004127/banner/json.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "javascript"
+            ]
+        },
+        {
+            "old_file_name": "mariadb.jpg",
+            "new_file_name": "mariadb.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004118/banner/mariadb.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "database"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_28.jpg",
+            "new_file_name": "notion_28.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004102/banner/notion_28.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "houdini_feathers.png",
+            "new_file_name": "houdini.png",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004068/banner/houdini.png",
+            "tags": [
+                "banner",
+                "tools",
+                "cgi"
+            ]
+        },
+        {
+            "old_file_name": "cplusplusprogramming.jpg",
+            "new_file_name": "cpp.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004129/banner/cpp.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "c"
+            ]
+        },
+        {
+            "old_file_name": "usd.jpg",
+            "new_file_name": "usd.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004066/banner/usd.jpg",
+            "tags": [
+                "banner",
+                "tools",
+                "cgi"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_27.jpg",
+            "new_file_name": "notion_27.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004096/banner/notion_27.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "shell2.jpg",
+            "new_file_name": "shell.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004120/banner/shell.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "shell"
+            ]
+        },
+        {
+            "old_file_name": "Nuke_banner.jpg",
+            "new_file_name": "nuke.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004066/banner/nuke.jpg",
+            "tags": [
+                "banner",
+                "tools",
+                "cgi"
+            ]
+        },
+        {
+            "old_file_name": "markdown.jpg",
+            "new_file_name": "markdown.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004124/banner/markdown.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "markup"
+            ]
+        },
+        {
+            "old_file_name": "ocio.jpg",
+            "new_file_name": "ocio.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004062/banner/ocio.jpg",
+            "tags": [
+                "banner",
+                "tools",
+                "cgi"
+            ]
+        },
+        {
+            "old_file_name": "spotify.jpg",
+            "new_file_name": "spotify.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004056/banner/spotify.jpg",
+            "tags": [
+                "banner",
+                "tools",
+                "music"
+            ]
+        },
+        {
+            "old_file_name": "macos.jpg",
+            "new_file_name": "macos.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004140/banner/macos.jpg",
+            "tags": [
+                "banner",
+                "os"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_05.jpg",
+            "new_file_name": "notion_05.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004108/banner/notion_05.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "ATT_Banner.jpg",
+            "new_file_name": "att.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004075/banner/att.jpg",
+            "tags": [
+                "banner",
+                "web"
+            ]
+        },
+        {
+            "old_file_name": "javascript-banner.jpg",
+            "new_file_name": "javascript.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004127/banner/javascript.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "javascript"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_04.jpg",
+            "new_file_name": "notion_04.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004110/banner/notion_04.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_11.jpg",
+            "new_file_name": "notion_11.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004107/banner/notion_11.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "abstract24.jpeg",
+            "new_file_name": "abstract_24.jpeg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004055/banner/abstract_24.jpg",
+            "tags": [
+                "banner",
+                "abstract"
+            ]
+        },
+        {
+            "old_file_name": "NumPy.jpg",
+            "new_file_name": "numpy.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004134/banner/numpy.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "package"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_22.jpg",
+            "new_file_name": "notion_22.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004082/banner/notion_22.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_01.jpg",
+            "new_file_name": "notion_01.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004104/banner/notion_01.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_33.jpg",
+            "new_file_name": "notion_33.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004096/banner/notion_33.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "python-logo-banner.jpg",
+            "new_file_name": "python.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004120/banner/python.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "python"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_17.jpg",
+            "new_file_name": "notion_17.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004099/banner/notion_17.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "survivaltoolkit.jpg",
+            "new_file_name": "survivaltoolkit.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004073/banner/survivaltoolkit.jpg",
+            "tags": [
+                "banner",
+                "tools",
+                "cgi"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_06.jpg",
+            "new_file_name": "notion_06.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004111/banner/notion_06.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "vex.jpg",
+            "new_file_name": "vex.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004064/banner/vex.jpg",
+            "tags": [
+                "banner",
+                "tools",
+                "cgi"
+            ]
+        },
+        {
+            "old_file_name": "matplotlib.jpg",
+            "new_file_name": "matplotlib.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004133/banner/matplotlib.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "package"
+            ]
+        },
+        {
+            "old_file_name": "YouTube.jpg",
+            "new_file_name": "youtube.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004076/banner/youtube.jpg",
+            "tags": [
+                "banner",
+                "web"
+            ]
+        },
+        {
+            "old_file_name": "PyTorch.jpg",
+            "new_file_name": "pytorch.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004137/banner/pytorch.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "package"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_03.jpg",
+            "new_file_name": "notion_03.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004098/banner/notion_03.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "linux.jpg",
+            "new_file_name": "linux.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004138/banner/linux.jpg",
+            "tags": [
+                "banner",
+                "os"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_07.jpg",
+            "new_file_name": "notion_07.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004113/banner/notion_07.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "CuPy.jpg",
+            "new_file_name": "cupy.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004136/banner/cupy.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "package"
+            ]
+        },
+        {
+            "old_file_name": "Pandas.jpg",
+            "new_file_name": "pandas.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004132/banner/pandas.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "package"
+            ]
+        },
+        {
+            "old_file_name": "seaborn.jpg",
+            "new_file_name": "seaborn.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004135/banner/seaborn.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "package"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_08.jpg",
+            "new_file_name": "notion_08.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004089/banner/notion_08.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "Numba.jpg",
+            "new_file_name": "numba.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004131/banner/numba.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "package"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_13.jpg",
+            "new_file_name": "notion_13.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004112/banner/notion_13.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "abstract19.jpeg",
+            "new_file_name": "abstract_19.jpeg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004053/banner/abstract_19.jpg",
+            "tags": [
+                "banner",
+                "abstract"
+            ]
+        },
+        {
+            "old_file_name": "OpenChessSet.png",
+            "new_file_name": "openchess.png",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004070/banner/openchess.png",
+            "tags": [
+                "banner",
+                "tools",
+                "cgi"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_20.jpg",
+            "new_file_name": "notion_20.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004087/banner/notion_20.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "kmeans.jpg",
+            "new_file_name": "kmeans.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004081/banner/kmeans.jpg",
+            "tags": [
+                "banner",
+                "algorithm"
+            ]
+        },
+        {
+            "old_file_name": "hipFlask.jpg",
+            "new_file_name": "hipflask.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004079/banner/hipflask.jpg",
+            "tags": [
+                "banner",
+                "learning"
+            ]
+        },
+        {
+            "old_file_name": "lua.jpg",
+            "new_file_name": "lua.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004123/banner/lua.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "lua"
+            ]
+        },
+        {
+            "old_file_name": "windows.jpg",
+            "new_file_name": "windows.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004140/banner/windows.jpg",
+            "tags": [
+                "banner",
+                "os"
+            ]
+        },
+        {
+            "old_file_name": "docker.jpg",
+            "new_file_name": "docker.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004124/banner/docker.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "container"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_35.jpg",
+            "new_file_name": "notion_35.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004086/banner/notion_35.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "spotifyai.jpeg",
+            "new_file_name": "spotifyai.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004058/banner/spotifyai.jpg",
+            "tags": [
+                "banner",
+                "tools",
+                "music"
+            ]
+        },
+        {
+            "old_file_name": "neatvideo.jpg",
+            "new_file_name": "neatvideo.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004064/banner/neatvideo.jpg",
+            "tags": [
+                "banner",
+                "tools",
+                "cgi"
+            ]
+        },
+        {
+            "old_file_name": "iTerm2.jpg",
+            "new_file_name": "iterm2.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004060/banner/iterm2.jpg",
+            "tags": [
+                "banner",
+                "tools",
+                "cli"
+            ]
+        },
+        {
+            "old_file_name": "cprogrammingbanner.jpg",
+            "new_file_name": "c.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004130/banner/c.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "c"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_29.jpg",
+            "new_file_name": "notion_29.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004106/banner/notion_29.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "Sql.jpg",
+            "new_file_name": "sql.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004115/banner/sql.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "database"
+            ]
+        },
+        {
+            "old_file_name": "n8n.jpg",
+            "new_file_name": "n8n.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004125/banner/n8n.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "workflow"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_24.jpg",
+            "new_file_name": "notion_24.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004091/banner/notion_24.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "Nvidia_banner.jpg",
+            "new_file_name": "nvidia.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004075/banner/nvidia.jpg",
+            "tags": [
+                "banner",
+                "hardware"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_32.jpg",
+            "new_file_name": "notion_32.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004097/banner/notion_32.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "arnold_banner.avif",
+            "new_file_name": "arnold.avif",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004061/banner/arnold.avif",
+            "tags": [
+                "banner",
+                "tools",
+                "cgi"
+            ]
+        },
+        {
+            "old_file_name": "prefect.jpg",
+            "new_file_name": "prefect.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004126/banner/prefect.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "workflow"
+            ]
+        },
+        {
+            "old_file_name": "abstract18.jpeg",
+            "new_file_name": "abstract_18.jpeg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004054/banner/abstract_18.jpg",
+            "tags": [
+                "banner",
+                "abstract"
+            ]
+        },
+        {
+            "old_file_name": "bookmarks.jpg",
+            "new_file_name": "bookmarks.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004078/banner/bookmarks.jpg",
+            "tags": [
+                "banner",
+                "web"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_15.jpg",
+            "new_file_name": "notion_15.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004105/banner/notion_15.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "karma_banner.jpg",
+            "new_file_name": "karma.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004065/banner/karma.jpg",
+            "tags": [
+                "banner",
+                "tools",
+                "cgi"
+            ]
+        },
+        {
+            "old_file_name": "BeautifulSoup.jpg",
+            "new_file_name": "beautifulsoup.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004138/banner/beautifulsoup.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "package"
+            ]
+        },
+        {
+            "old_file_name": "photoshop_banner.jpeg",
+            "new_file_name": "photoshop.jpeg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004071/banner/photoshop.jpg",
+            "tags": [
+                "banner",
+                "tools",
+                "cgi"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_23.jpg",
+            "new_file_name": "notion_23.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004084/banner/notion_23.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "jupyter_notebook.jpg",
+            "new_file_name": "jupyter.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004114/banner/jupyter.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "ide"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_30.jpg",
+            "new_file_name": "notion_30.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004090/banner/notion_30.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "xcode.jpg",
+            "new_file_name": "xcode.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004128/banner/xcode.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "frameworks"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_38.jpg",
+            "new_file_name": "notion_38.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004109/banner/notion_38.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_25.jpg",
+            "new_file_name": "notion_25.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004094/banner/notion_25.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_18.jpg",
+            "new_file_name": "notion_18.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004092/banner/notion_18.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_09.jpg",
+            "new_file_name": "notion_09.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004085/banner/notion_09.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "github.jpg",
+            "new_file_name": "github.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004074/banner/github.jpg",
+            "tags": [
+                "banner",
+                "tools",
+                "git"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_36.jpg",
+            "new_file_name": "notion_36.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004083/banner/notion_36.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_34.jpg",
+            "new_file_name": "notion_34.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004088/banner/notion_34.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_12.jpg",
+            "new_file_name": "notion_12.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004111/banner/notion_12.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_16.jpg",
+            "new_file_name": "notion_16.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004100/banner/notion_16.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_19.jpg",
+            "new_file_name": "notion_19.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004092/banner/notion_19.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "abstract21.jpeg",
+            "new_file_name": "abstract_21.jpeg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004052/banner/abstract_21.jpg",
+            "tags": [
+                "banner",
+                "abstract"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_14.jpg",
+            "new_file_name": "notion_14.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004103/banner/notion_14.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_31.jpg",
+            "new_file_name": "notion_31.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004095/banner/notion_31.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "PostgreSQL.jpg",
+            "new_file_name": "postgresql.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004116/banner/postgresql.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "database"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_02.jpg",
+            "new_file_name": "notion_02.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004101/banner/notion_02.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_21.jpg",
+            "new_file_name": "notion_21.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004087/banner/notion_21.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_26.jpg",
+            "new_file_name": "notion_26.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004097/banner/notion_26.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "notion_style_banners_lgt_37.jpg",
+            "new_file_name": "notion_37.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004083/banner/notion_37.jpg",
+            "tags": [
+                "banner",
+                "notion"
+            ]
+        },
+        {
+            "old_file_name": "TensorFlow.jpg",
+            "new_file_name": "tensorflow.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004132/banner/tensorflow.jpg",
+            "tags": [
+                "banner",
+                "programming",
+                "package"
+            ]
+        },
+        {
+            "old_file_name": "ventoy.jpg",
+            "new_file_name": "ventoy.jpg",
+            "cloudinary_url": "https://res.cloudinary.com/dicttuyma/image/upload/v1742004060/banner/ventoy.jpg",
+            "tags": [
+                "banner",
+                "tools",
+                "cli"
+            ]
+        }
+    ]
+}

@@ -3,6 +3,7 @@ import json, csv
 import pickle
 import time
 import shutil
+from pathlib import Path
 from urllib.parse import urlparse
 
 
@@ -444,22 +445,123 @@ if __name__ == '__main__':
 
     # move_unused_banner_files(cover_file_path, banner_folder, archive_folder)
 
-    def rename_notion_banners(directory):
+
+    def merge_cover_data(upload_results_path, cover_file_name_path, output_path):
         """
-        Renames files in the specified directory from 'Notion_Style_Banners_[lgt_XX].jpg'
-        to 'notion_XX.jpg'.
+        Merges the cloudinary_url and tags from `upload_results.json` into
+        the objects in `cover_file_name.json`, matching on `original_filename`
+        == `new_file_name`.
+    
+        Args:
+            upload_results_path (str or Path): Path to upload_results.json
+            cover_file_name_path (str or Path): Path to cover_file_name.json
+            output_path (str or Path): Where to write the merged JSON
         """
-        pattern = re.compile(r"Notion_Style_Banners_\[lgt_(\d+)\]\.jpg")
+        upload_results_path = Path(upload_results_path)
+        cover_file_name_path = Path(cover_file_name_path)
+        output_path = Path(output_path)
     
-        for filename in os.listdir(directory):
-            match = pattern.match(filename)
-            if match:
-                new_name = f"notion_{int(match.group(1)):02d}.jpg"
-                old_path = os.path.join(directory, filename)
-                new_path = os.path.join(directory, new_name)
-                os.rename(old_path, new_path)
-                print(f"Renamed: {filename} → {new_name}")
+        # Load upload_results.json
+        with upload_results_path.open("r") as f:
+            upload_results = json.load(f)
     
-    # Usage Example
-    directory = "/Users/suhail/Desktop"  # Adjust if necessary
-    rename_notion_banners(directory)
+        # Create a dictionary keyed by original_filename
+        # e.g. {"abstract_21.jpeg": {"original_filename": "...", "cloudinary_url": "...", "tags": [...]}, ...}
+        upload_dict = {item["original_filename"]: item for item in upload_results}
+    
+        # Load cover_file_name.json
+        with cover_file_name_path.open("r") as f:
+            cover_data = json.load(f)
+    
+        # Iterate over each file entry in cover_file_name.json
+        for entry in cover_data["files"]:
+            new_name = entry["new_file_name"]
+    
+            # If there's a match, add cloudinary_url and tags
+            if new_name in upload_dict:
+                entry["cloudinary_url"] = upload_dict[new_name]["cloudinary_url"]
+                entry["tags"] = upload_dict[new_name]["tags"]
+    
+        # Write the merged data to output_path
+        with output_path.open("w") as f:
+            json.dump(cover_data, f, indent=4)
+    
+        print(f"Merged data written to {output_path}")
+    
+    # Example usage:
+    #merge_cover_data(
+    #    "upload_results.json",
+    #    "cover_file_name.json",
+    #    "cover_file_name_merged.json"
+    #)
+
+
+
+    def create_new_url(cloudinary_url, transformation="w_1500,h_600,c_fill,g_auto"):
+        """
+        Given a Cloudinary URL, inserts the transformation parameters
+        right after the 'upload/' marker.
+        
+        Example:
+          Input:  https://res.cloudinary.com/dicttuyma/image/upload/v1742004118/banner/mariadb.jpg
+          Output: https://res.cloudinary.com/dicttuyma/image/upload/w_1500,h_600,c_fill,g_auto/v1742004118/banner/mariadb.jpg
+        """
+        marker = "upload/"
+        idx = cloudinary_url.find(marker)
+        if idx == -1:
+            # Marker not found, return the original URL as fallback
+            return cloudinary_url
+        idx += len(marker)
+        return cloudinary_url[:idx] + transformation + "/" + cloudinary_url[idx:]
+    
+    def merge_cover_images(cover_images_path, cover_file_name_merged_path, output_path):
+        """
+        Merges data from cover_images.json and cover_file_name_merged.json.
+        
+        For each entry in cover_images.json (keyed by "file_name"), if a match is found in
+        cover_file_name_merged.json (using "old_file_name"), then add:
+          - new_file_name
+          - cloudinary_url
+          - tags
+          - new_url (created by applying Cloudinary transformations)
+        
+        The merged data is written to output_path.
+        """
+        cover_images_path = Path(cover_images_path)
+        cover_file_name_merged_path = Path(cover_file_name_merged_path)
+        output_path = Path(output_path)
+        
+        # Load cover_images.json
+        with cover_images_path.open("r") as f:
+            cover_images_data = json.load(f)
+        
+        # Load cover_file_name_merged.json
+        with cover_file_name_merged_path.open("r") as f:
+            cover_file_data = json.load(f)
+        
+        # Build a lookup dictionary using the common key (old_file_name)
+        lookup = {item["old_file_name"]: item for item in cover_file_data.get("files", [])}
+        
+        # Process each cover image entry
+        for cover in cover_images_data.get("cover", []):
+            file_name = cover.get("file_name")
+            if file_name in lookup:
+                merged_info = lookup[file_name]
+                # Add new_file_name, cloudinary_url, and tags from cover_file_name_merged.json
+                cover["new_file_name"] = merged_info["new_file_name"]
+                cover["cloudinary_url"] = merged_info["cloudinary_url"]
+                cover["tags"] = merged_info["tags"]
+                # Generate a new_url with the transformation parameters
+                cover["new_url"] = create_new_url(merged_info["cloudinary_url"])
+        
+        # Write the merged output to a file
+        with output_path.open("w") as f:
+            json.dump(cover_images_data, f, indent=4)
+        
+        print(f"Merged cover images written to {output_path}")
+    
+#    merge_cover_images(
+#        "cover_images.json",             # Path to your cover_images.json
+#        "cover_file_name_merged.json",     # Path to your cover_file_name_merged.json
+#        "cover_images_merged.json"         # Output path for the merged JSON
+#    )
