@@ -14,6 +14,7 @@ notion-client = "^2.2.1"
 prefect = {extras = ["github"], version = "^3.1.5"}
 supabase = "^2.10.0"
 python-dotenv = "^1.0.1"
+cloudinary = "^1.42.2"
 
 
 [build-system]
