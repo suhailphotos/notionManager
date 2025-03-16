@@ -99,6 +99,11 @@ class NotionManager:
         payload = {"properties": properties}
         return self.api.update_page(page_id, payload)
 
+    def delete_page(self, page_id):
+        # Mark the page as archived.
+        payload = {"archived": True}
+        return self.api.update_page(page_id, payload)
+
     def transform_page(self, page, properties_mapping):
         """
         Transform a single Notion page into a simpler dictionary, based on a mapping.

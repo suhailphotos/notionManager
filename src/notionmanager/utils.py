@@ -1,10 +1,66 @@
+import os
 import re
+import hashlib
 import json, csv
 import pickle
 import time
 import shutil
 from pathlib import Path
 from urllib.parse import urlparse
+from typing import List, Optional, Tuple, Any
+
+def expand_or_preserve_env_vars(
+    raw_path: Optional[str],
+    parent_path: Optional[Any] = None,
+    keep_env_in_path: bool = True
+) -> Tuple[Path, str]:
+    """
+    Takes a potential 'raw_path' that may contain environment variables like '$ANYVAR/some/dir'.
+    
+    1) If 'raw_path' is provided, we fully expand it using os.path.expandvars for disk usage.
+    2) Meanwhile, final_path_str retains the original (with $VAR) if keep_env_in_path is True.
+    3) If raw_path is None, we fallback to parent_path (processed similarly) or to ~/Documents.
+    
+    Returns (expanded_path, final_path_str).
+    """
+    if raw_path:
+        final_path_str = raw_path if keep_env_in_path else os.path.expandvars(raw_path)
+        expanded = os.path.expandvars(raw_path)
+        expanded_path = Path(expanded).expanduser()
+        return expanded_path, final_path_str
+    else:
+        if parent_path is not None:
+            if isinstance(parent_path, str):
+                final_path_str = parent_path if keep_env_in_path else os.path.expandvars(parent_path)
+                expanded = os.path.expandvars(parent_path)
+                expanded_path = Path(expanded).expanduser()
+                return expanded_path, final_path_str
+            else:
+                return parent_path, str(parent_path)
+        default_fallback = Path.home() / "Documents"
+        return default_fallback, str(default_fallback)
+
+def compute_file_hash(file_path: Path) -> str:
+    """Compute MD5 hash for a given file."""
+    hasher = hashlib.md5()
+    with file_path.open("rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hasher.update(chunk)
+    return hasher.hexdigest()
+
+def generate_tags(relative_path: Path, root_category: str) -> List[str]:
+    """
+    Generates tags based on the folder hierarchy.
+    For example, for file '/path/to/banner/programming/matplotlib.jpg'
+    returns ['banner', 'programming'].
+    """
+    tag_list = [root_category] + list(relative_path.parts[:-1])
+    filtered_tags = []
+    for tag in tag_list:
+        t = tag.lower().replace(" ", "_")
+        if t not in filtered_tags:
+            filtered_tags.append(t)
+    return filtered_tags
 
 
 def extract_id_from_url(notion_url):
@@ -147,9 +203,9 @@ def get_databases_for_pages(notion, json_file_path):
             try:
                 print(f"📄 Fetching databases for page {page_id}...")
                 page["databases"] = fetch_databases_recursive(page_id)
-                print(f"✅ Found {len(page['databases'])} databases for page {page_id}")
+                print(f"Found {len(page['databases'])} databases for page {page_id}")
             except Exception as e:
-                print(f"❌ Failed to fetch databases for page {page_id}: {e}")
+                print(f"Failed to fetch databases for page {page_id}: {e}")
 
     # Write updated JSON back to file
     with open(json_file_path, "w") as file:
@@ -263,10 +319,10 @@ def update_json_with_pages(notion, json_file_path, output_file_path, pickle_file
                     for page in pages
                 ]
 
-                print(f"✅ Found {len(database['pages'])} pages for database {database_id}")
+                print(f"Found {len(database['pages'])} pages for database {database_id}")
 
             except Exception as e:
-                print(f"❌ Failed to fetch pages for database {database_id}: {e}")
+                print(f"Failed to fetch pages for database {database_id}: {e}")
 
     # Save raw data to a pickle file
     save_pages_to_pickle(pickle_file_path, all_pages_data)
@@ -276,6 +332,23 @@ def update_json_with_pages(notion, json_file_path, output_file_path, pickle_file
         json.dump(data, file, indent=4)
 
     print(f"📂 Updated JSON saved to {output_file_path}")
+
+def create_new_url(cloudinary_url, transformation="w_1500,h_600,c_fill,g_auto"):
+    """
+    Given a Cloudinary URL, inserts the transformation parameters
+    right after the 'upload/' marker.
+    
+    Example:
+      Input:  https://res.cloudinary.com/dicttuyma/image/upload/v1742004118/banner/mariadb.jpg
+      Output: https://res.cloudinary.com/dicttuyma/image/upload/w_1500,h_600,c_fill,g_auto/v1742004118/banner/mariadb.jpg
+    """
+    marker = "upload/"
+    idx = cloudinary_url.find(marker)
+    if idx == -1:
+        # Marker not found, return the original URL as fallback
+        return cloudinary_url
+    idx += len(marker)
+    return cloudinary_url[:idx] + transformation + "/" + cloudinary_url[idx:]
 
 def extract_unique_covers(json_file_path, csv_output_path, json_output_path):
     """
@@ -497,22 +570,7 @@ if __name__ == '__main__':
 
 
 
-    def create_new_url(cloudinary_url, transformation="w_1500,h_600,c_fill,g_auto"):
-        """
-        Given a Cloudinary URL, inserts the transformation parameters
-        right after the 'upload/' marker.
-        
-        Example:
-          Input:  https://res.cloudinary.com/dicttuyma/image/upload/v1742004118/banner/mariadb.jpg
-          Output: https://res.cloudinary.com/dicttuyma/image/upload/w_1500,h_600,c_fill,g_auto/v1742004118/banner/mariadb.jpg
-        """
-        marker = "upload/"
-        idx = cloudinary_url.find(marker)
-        if idx == -1:
-            # Marker not found, return the original URL as fallback
-            return cloudinary_url
-        idx += len(marker)
-        return cloudinary_url[:idx] + transformation + "/" + cloudinary_url[idx:]
+
     
     def merge_cover_images(cover_images_path, cover_file_name_merged_path, output_path):
         """
