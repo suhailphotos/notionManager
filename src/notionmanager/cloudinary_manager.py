@@ -24,7 +24,6 @@ class CloudinaryManager:
         Initializes CloudinaryManager with credentials.
         Loads credentials from parameters or from .env (current directory or user home).
         """
-        # Look for .env file in current directory, then in production folder.
         env_path = Path(__file__).parent / ".env"
         prod_env_path = Path.home() / ".notionmanager" / ".env"
         if env_path.exists():
@@ -48,17 +47,12 @@ class CloudinaryManager:
 
     def _extract_public_id(self, url: str) -> str:
         """
-        Extracts the public_id from a Cloudinary URL, ignoring any transformation parameters.
-        For example, for:
+        Extracts the public_id from a Cloudinary URL, ignoring transformation parameters.
+        For example:
           https://res.cloudinary.com/dicttuyma/image/upload/w_1500,h_600,c_fill,g_auto/v1742155960/banner/abstract_18.jpg
-        it returns: "banner/abstract_18"
+        returns: "banner/abstract_18"
         """
         try:
-            # Regex explanation:
-            # - /upload/ : literal segment.
-            # - (?:[^/]+/)? : optionally matches a transformation segment (e.g. "w_1500,h_600,c_fill,g_auto/")
-            # - v\d+/ : version number segment.
-            # - ([^\.]+) : capture group for all characters up until a dot (this is our public id).
             pattern = r"/upload/(?:[^/]+/)?v\d+/([^\.]+)\."
             match = re.search(pattern, url)
             if match:
@@ -71,17 +65,6 @@ class CloudinaryManager:
 
     def scan_folder(self, folder_path: str, root_category: str, 
                     skip_files: Optional[List[str]] = None) -> List[dict]:
-        """
-        Scans a folder and returns a list of file info dictionaries.
-        
-        Each dictionary contains:
-          - file_name: the file name
-          - raw_path: the file path with environment variables preserved
-          - expanded_path: the fully expanded file path for disk operations
-          - hash: MD5 hash of the file
-          - tags: list of tags generated from the folder structure
-        Files in skip_files are omitted.
-        """
         skip_files = skip_files or []
         expanded_folder_path, raw_folder_path = expand_or_preserve_env_vars(
             folder_path, None, keep_env_in_path=True
@@ -99,7 +82,6 @@ class CloudinaryManager:
                 file_hash = compute_file_hash(file)
                 relative_path = file.relative_to(expanded_folder_path)
                 tags = generate_tags(relative_path, root_category)
-                # Rebuild the raw file path by joining the raw folder path with the relative path.
                 raw_file_path = os.path.join(raw_folder_path, str(relative_path))
                 files_data.append({
                     "file_name": file.name,
@@ -111,11 +93,6 @@ class CloudinaryManager:
         return files_data
 
     def upload_file(self, file_info: dict, root_category: str) -> dict:
-        """
-        Uploads a single file to Cloudinary using the expanded path.
-        With use_filename=True and unique_filename=False, if a file with the same name exists it is overwritten.
-        Returns Cloudinary's response dictionary.
-        """
         file_path = Path(file_info["expanded_path"])
         response = cloudinary.uploader.upload(
             str(file_path),
@@ -128,10 +105,6 @@ class CloudinaryManager:
 
     def upload_assets(self, folder_path: str, root_category: str, 
                       skip_files: Optional[List[str]] = None) -> List[dict]:
-        """
-        Scans the folder and uploads assets that are not in skip_files.
-        Returns a list of file info dictionaries with Cloudinary URLs added.
-        """
         files_data = self.scan_folder(folder_path, root_category, skip_files)
         uploaded_files = []
         for file_info in files_data:
@@ -140,6 +113,20 @@ class CloudinaryManager:
             uploaded_files.append(file_info)
             print(f"Uploaded: {file_info['file_name']} → {response['secure_url']}")
         return uploaded_files
+
+    def _update_display_name(self, public_id: str, display_name: str):
+        """
+        Update the custom metadata field "display_name" for the given public_id.
+        Must define "display_name" in Cloudinary as a custom structured metadata field.
+        """
+        try:
+            cloudinary.uploader.update_metadata(
+                {"display_name": display_name},
+                public_ids=[public_id]
+            )
+            print(f"Set display_name='{display_name}' on public_id={public_id}")
+        except Exception as e:
+            print(f"Failed to set display_name metadata: {e}")
 
     def update_assets(
         self,
@@ -150,14 +137,6 @@ class CloudinaryManager:
         update_tags: bool = True,
         skip_files: Optional[List[str]] = None
     ):
-        """
-        Synchronizes local folder assets with Cloudinary and updates the Notion "Cover Images" database.
-        Also handles:
-          - File renames: if a file's hash remains the same but the file name/path has changed.
-          - File deletions: if a file exists in Notion (and on Cloudinary) but is no longer on disk.
-        When updating a page, a PATCH request is sent.
-        """
-        # Load Notion credentials if missing.
         if not notion_api_key or not notion_database_id:
             env_path = Path(__file__).parent / ".env"
             prod_env_path = Path.home() / ".notionmanager" / ".env"
@@ -172,7 +151,6 @@ class CloudinaryManager:
 
         notion_manager = NotionManager(notion_api_key, notion_database_id)
 
-        # Forward mapping to transform Notion pages.
         properties_mapping = {
             "id": {"target": "id", "return": "str"},
             "icon": {"target": "icon", "return": "object"},
@@ -186,7 +164,6 @@ class CloudinaryManager:
         notion_pages_raw = notion_manager.get_pages()
         notion_pages = notion_manager.transform_pages(notion_pages_raw, properties_mapping)
 
-        # Build lookup dictionaries keyed by file hash.
         scanned_files = self.scan_folder(folder_path, root_category, skip_files)
         scanned_by_hash = {f["hash"]: f for f in scanned_files}
         notion_by_hash = {}
@@ -195,7 +172,6 @@ class CloudinaryManager:
             if h:
                 notion_by_hash[h] = page
 
-        # Back mapping for building Notion payloads.
         back_mapping = {
             "icon": {"target": "icon", "return": "object"},
             "cover": {"target": "cover", "return": "object"},
@@ -206,7 +182,6 @@ class CloudinaryManager:
             "hash": {"target": "File Hash", "type": "rich_text", "return": "str", "property_id": "FJpK", "code": True}
         }
 
-        # Prepare default icon data.
         default_icon = {
             "icon": {
                 "type": "custom_emoji",
@@ -217,16 +192,18 @@ class CloudinaryManager:
                 }
             }
         }
-        FALLBACK_ICON_URL = "https://www.notion.so/icons/photo-landscape_lightgray.svg"
 
         # --- Process additions, updates, and renames based on file hash ---
         for file_hash, file_info in scanned_by_hash.items():
+            cover_name = Path(file_info["file_name"]).stem.title()
+
             if file_hash not in notion_by_hash:
-                # New file case.
+                # New file
                 response = self.upload_file(file_info, root_category)
                 file_info["cloudinary_url"] = response["secure_url"]
+                self._update_display_name(response["public_id"], cover_name)
+
                 transformed_url = create_new_url(response["secure_url"])
-                cover_name = Path(file_info["file_name"]).stem.title()
                 flat_object = {
                     "icon": default_icon["icon"],
                     "cover": {"type": "external", "external": {"url": transformed_url}},
@@ -237,31 +214,44 @@ class CloudinaryManager:
                     "hash": file_info["hash"]
                 }
                 payload = notion_manager.build_notion_payload(flat_object, back_mapping)
-                # Ensure custom emoji is passed directly.
                 if flat_object.get("icon") and flat_object["icon"].get("type") == "custom_emoji":
                     payload["icon"] = flat_object["icon"]
                 notion_manager.add_page(payload)
                 print(f"Added new Notion page for {file_info['file_name']}")
             else:
-                # File exists. Check for renames and metadata updates.
                 existing_page = notion_by_hash[file_hash]
                 existing_raw_path = existing_page.get("path", "")
                 existing_file_name = Path(os.path.expandvars(existing_raw_path)).name
                 current_file_name = file_info["file_name"]
+
                 if existing_file_name != current_file_name:
-                    # Rename detected.
+                    # rename
                     existing_image_url = existing_page.get("image_url", "")
                     old_public_id = self._extract_public_id(existing_image_url)
                     new_public_id = f"{root_category}/{current_file_name.rsplit('.', 1)[0]}"
+
                     try:
-                        cloudinary.uploader.rename(old_public_id, new_public_id)
+                        rename_response = cloudinary.uploader.rename(old_public_id, new_public_id)
                         print(f"Renamed Cloudinary asset from {old_public_id} to {new_public_id}")
                     except Exception as e:
                         print(f"Failed to rename Cloudinary asset: {e}")
-                        response = self.upload_file(file_info, root_category)
-                        file_info["cloudinary_url"] = response["secure_url"]
+                        rename_response = self.upload_file(file_info, root_category)
+                        file_info["cloudinary_url"] = rename_response["secure_url"]
+                        old_public_id = None
+                        new_public_id = rename_response["public_id"]
+
+                    self._update_display_name(new_public_id, cover_name)
+
+                    try:
+                        resource_info = cloudinary.api.resource(new_public_id)
+                        new_secure_url = resource_info["secure_url"]
+                    except Exception as e:
+                        print(f"Failed to fetch resource info: {e}")
+                        new_secure_url = file_info.get("cloudinary_url", "")
+
                     flat_object = {
-                        "image_url": create_new_url(file_info.get("cloudinary_url", "")),
+                        "name": cover_name,
+                        "image_url": create_new_url(new_secure_url),
                         "tags": file_info["tags"],
                         "path": file_info["raw_path"]
                     }
@@ -269,12 +259,15 @@ class CloudinaryManager:
                     notion_manager.update_page(existing_page["id"], update_payload)
                     print(f"Updated Notion page for file rename: {current_file_name}")
                 else:
-                    # Check for metadata changes.
+                    # check if path/tags changed
                     if existing_raw_path != file_info["raw_path"] or (update_tags and existing_page.get("tags") != file_info["tags"]):
                         response = self.upload_file(file_info, root_category)
                         file_info["cloudinary_url"] = response["secure_url"]
+                        self._update_display_name(response["public_id"], cover_name)
+
                         transformed_url = create_new_url(response["secure_url"])
                         flat_object = {
+                            "name": cover_name,
                             "image_url": transformed_url,
                             "tags": file_info["tags"],
                             "path": file_info["raw_path"]
@@ -285,30 +278,35 @@ class CloudinaryManager:
                     else:
                         print(f"No changes detected for {current_file_name}")
 
-        # --- Handle deletion: any Notion page with a hash not found in scanned files.
+        # --- Handle deletion
         for file_hash, page in notion_by_hash.items():
             if file_hash not in scanned_by_hash:
-                page_file_name = Path(os.path.expandvars(page.get("path", ""))).name
+                # File not found on disk => delete from Notion and Cloudinary
+                # Use the public_id extracted from page["image_url"] rather than local file name
+                existing_image_url = page.get("image_url", "")
+                public_id = self._extract_public_id(existing_image_url)
+
                 try:
-                    # Mark the page as archived (delete_page must mark it as archived).
+                    # Delete from Notion (archive)
                     notion_manager.delete_page(page["id"])
-                    # Delete the asset from Cloudinary.
-                    response = cloudinary.uploader.destroy(page_file_name)
-                    if response.get("result") == "ok":
-                        print(f"Deleted Cloudinary asset for {page_file_name}")
+
+                    # Delete from Cloudinary
+                    destroy_resp = cloudinary.uploader.destroy(public_id)
+                    if destroy_resp.get("result") == "ok":
+                        print(f"Deleted Cloudinary asset for {public_id}")
                     else:
-                        print(f"Error deleting Cloudinary asset for {page_file_name}: {response}")
-                    print(f"Deleted Notion page for {page_file_name}")
+                        print(f"Error deleting Cloudinary asset for {public_id}: {destroy_resp}")
+                    print(f"Deleted Notion page for {public_id}")
                 except Exception as e:
-                    print(f"Failed to delete asset for {page_file_name}: {e}")
+                    print(f"Failed to delete asset for {public_id}: {e}")
 
         print("Synchronization complete.")
+
 
 # Example usage:
 if __name__ == "__main__":
     manager = CloudinaryManager()
     manager.update_assets(
         folder_path="$DROPBOX/pictures/assets/banner",
-        root_category="banner",
-        skip_files=["ignore_me.jpg"]
+        root_category="banner"
     )
