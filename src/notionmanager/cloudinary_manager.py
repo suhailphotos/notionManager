@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import cloudinary
 import cloudinary.uploader
@@ -44,6 +45,29 @@ class CloudinaryManager:
             api_secret=self.api_secret,
             **config
         )
+
+    def _extract_public_id(self, url: str) -> str:
+        """
+        Extracts the public_id from a Cloudinary URL, ignoring any transformation parameters.
+        For example, for:
+          https://res.cloudinary.com/dicttuyma/image/upload/w_1500,h_600,c_fill,g_auto/v1742155960/banner/abstract_18.jpg
+        it returns: "banner/abstract_18"
+        """
+        try:
+            # Regex explanation:
+            # - /upload/ : literal segment.
+            # - (?:[^/]+/)? : optionally matches a transformation segment (e.g. "w_1500,h_600,c_fill,g_auto/")
+            # - v\d+/ : version number segment.
+            # - ([^\.]+) : capture group for all characters up until a dot (this is our public id).
+            pattern = r"/upload/(?:[^/]+/)?v\d+/([^\.]+)\."
+            match = re.search(pattern, url)
+            if match:
+                return match.group(1)
+            else:
+                return ""
+        except Exception as e:
+            print(f"Error extracting public_id: {e}")
+            return ""
 
     def scan_folder(self, folder_path: str, root_category: str, 
                     skip_files: Optional[List[str]] = None) -> List[dict]:
@@ -128,7 +152,7 @@ class CloudinaryManager:
     ):
         """
         Synchronizes local folder assets with Cloudinary and updates the Notion "Cover Images" database.
-        In addition, handles:
+        Also handles:
           - File renames: if a file's hash remains the same but the file name/path has changed.
           - File deletions: if a file exists in Notion (and on Cloudinary) but is no longer on disk.
         When updating a page, a PATCH request is sent.
@@ -219,18 +243,23 @@ class CloudinaryManager:
                 notion_manager.add_page(payload)
                 print(f"Added new Notion page for {file_info['file_name']}")
             else:
-                # File exists. Check if file name/path (rename) or tags have changed.
+                # File exists. Check for renames and metadata updates.
                 existing_page = notion_by_hash[file_hash]
                 existing_raw_path = existing_page.get("path", "")
                 existing_file_name = Path(os.path.expandvars(existing_raw_path)).name
                 current_file_name = file_info["file_name"]
                 if existing_file_name != current_file_name:
                     # Rename detected.
+                    existing_image_url = existing_page.get("image_url", "")
+                    old_public_id = self._extract_public_id(existing_image_url)
+                    new_public_id = f"{root_category}/{current_file_name.rsplit('.', 1)[0]}"
                     try:
-                        cloudinary.uploader.rename(existing_file_name, current_file_name)
-                        print(f"Renamed Cloudinary asset from {existing_file_name} to {current_file_name}")
+                        cloudinary.uploader.rename(old_public_id, new_public_id)
+                        print(f"Renamed Cloudinary asset from {old_public_id} to {new_public_id}")
                     except Exception as e:
                         print(f"Failed to rename Cloudinary asset: {e}")
+                        response = self.upload_file(file_info, root_category)
+                        file_info["cloudinary_url"] = response["secure_url"]
                     flat_object = {
                         "image_url": create_new_url(file_info.get("cloudinary_url", "")),
                         "tags": file_info["tags"],
@@ -261,11 +290,15 @@ class CloudinaryManager:
             if file_hash not in scanned_by_hash:
                 page_file_name = Path(os.path.expandvars(page.get("path", ""))).name
                 try:
-                    # Call delete_page to archive the page.
+                    # Mark the page as archived (delete_page must mark it as archived).
                     notion_manager.delete_page(page["id"])
-                    # Also, delete the asset from Cloudinary.
-                    cloudinary.uploader.destroy(page_file_name)
-                    print(f"Deleted Notion page and Cloudinary asset for {page_file_name}")
+                    # Delete the asset from Cloudinary.
+                    response = cloudinary.uploader.destroy(page_file_name)
+                    if response.get("result") == "ok":
+                        print(f"Deleted Cloudinary asset for {page_file_name}")
+                    else:
+                        print(f"Error deleting Cloudinary asset for {page_file_name}: {response}")
+                    print(f"Deleted Notion page for {page_file_name}")
                 except Exception as e:
                     print(f"Failed to delete asset for {page_file_name}: {e}")
 
