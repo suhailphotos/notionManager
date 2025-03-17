@@ -1,0 +1,33 @@
+{
+  "databases":[
+    {
+      "id": "154a1865-b187-8082-9bd2-c4349fb0c736",
+      "name": "Cover Images",
+      "default_icon": {
+        "type": "custom_emoji",
+        "custom_emoji": { "id": "1b7a1865-b187-8094-9473-007ae41f1605", "name": "cover-image",
+          "url": "https://s3-us-west-2.amazonaws.com/public.notion-static.com/4fe77a7a-82e5-43e4-9cf8-18f00a46359c/cover-image.svg"
+        }
+      },
+      "forward_mapping": {
+          "id": {"target": "id", "return": "str"},
+          "icon": {"target": "icon", "return": "object"},
+          "cover": {"target": "cover", "return": "object"},
+          "Cover Name": {"target": "name", "type": "title", "return": "str"},
+          "Image URL": {"target": "image_url", "type": "rich_text", "return": "str"},
+          "Tags": {"target": "tags", "type": "multi_select", "return": "list"},
+          "Source File Path": {"target": "path", "type": "rich_text", "return": "str"},
+          "File Hash": {"target": "hash", "type": "rich_text", "return": "str", "sync_key": true}
+      },
+      "reverse_mapping": {
+          "icon": {"target": "icon", "return": "object"},
+          "cover": {"target": "cover", "return": "object"},
+          "name": {"target": "Cover Name", "type": "title", "return": "str"},
+          "image_url": {"target": "Image URL", "type": "rich_text", "return": "str", "property_id": "gS%7D%3C", "code": true},
+          "tags": {"target": "Tags", "type": "multi_select", "return": "list", "property_id": "_G_%5D"},
+          "path": {"target": "Source File Path", "type": "rich_text", "return": "str", "property_id": "uUkM", "code": true},
+          "hash": {"target": "File Hash", "type": "rich_text", "return": "str", "property_id": "FJpK", "code": true}
+      }
+    }
+  ]
+}
