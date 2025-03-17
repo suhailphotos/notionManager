@@ -1,7 +1,6 @@
 import os
 import json
 import random
-import sys
 from pathlib import Path
 from dotenv import load_dotenv
 from notionmanager.notion import NotionManager
@@ -38,10 +37,12 @@ def update_cover_names(cover_file_name_path: str, cover_names_path: str) -> dict
     """
     Updates cover_names.json:
       - Loads cover_file_name.json to obtain a mapping (old_file_name -> new_file_name).
-      - Loads cover_names.json, which lists cover entries (each with an old file name and a current URL).
-      - Pulls cover images from the Cover Images database (via get_cover_images) to build a mapping 
+      - Loads cover_names.json, which lists cover entries (each with keys "file_name", "current_url", "new_url", etc.).
+      - Uses the Cover Images database (via get_cover_images) to build a mapping 
         from new file name to new Cloudinary URL.
       - Updates each cover entry's "new_url" field accordingly.
+      - Also, if a cover entry has no "tags" field, and if the new file name includes "notion",
+        a default tag ["notion"] is added.
     """
     cover_file_data = load_json(cover_file_name_path)
     cover_names = load_json(cover_names_path)
@@ -63,6 +64,13 @@ def update_cover_names(cover_file_name_path: str, cover_names_path: str) -> dict
     for cover in cover_names.get("cover", []):
         old_file = cover["file_name"]
         new_file = file_mapping.get(old_file)
+        # Append default tags if not present.
+        if "tags" not in cover:
+            # If new_file contains "notion" (case-insensitive), add tag "notion"
+            if new_file and "notion" in new_file.lower():
+                cover["tags"] = ["notion"]
+            else:
+                cover["tags"] = []
         if new_file:
             new_url = new_url_mapping.get(new_file)
             if new_url:
@@ -82,30 +90,40 @@ def update_notion_covers(notion_api_key: str, notion_db_pages_path: str, cover_n
     replacing them with new Cloudinary URLs.
     
     For each page:
-      - Extract the file name from its current cover URL.
-      - Look up the new URL in the updated cover_names mapping.
-      - If not found, randomly assign one from covers tagged "notion" (or a constant fallback).
-      - Patch the page using NotionAPI.update_page().
+      - Iterates over each parent → each database → each page.
+      - If the cover field is None or the URL does not contain the expected GitHub pattern,
+        the page is skipped.
+      - Otherwise, extracts the file name from the cover URL.
+      - Looks up the new URL in the updated cover_names mapping.
+      - If not found, randomly assigns one from covers tagged "notion" (or a constant fallback).
+      - Patches the page using NotionAPI.update_page().
     """
     pages_data = load_json(notion_db_pages_path)
     api = NotionAPI(notion_api_key)
     
     # Build a mapping from file name to new URL.
     cover_mapping = {entry["file_name"]: entry.get("new_url") for entry in cover_names.get("cover", [])}
-    # Build fallback list from covers tagged "notion"
+    # Build fallback list: use covers that have the "notion" tag.
     fallback_urls = [entry.get("new_url") for entry in cover_names.get("cover", [])
                      if entry.get("tags") and any(t.lower() == "notion" for t in entry["tags"]) and entry.get("new_url")]
-
-    
-    # Alternatively, define a constant fallback URL if needed.
+    # If fallback list is still empty, use a constant fallback.
     FALLBACK_COVER_URL = "https://res.cloudinary.com/dicttuyma/image/upload/w_1500,h_600,c_fill,g_auto/v1742094839/banner/notion_01.jpg"
     if not fallback_urls:
         fallback_urls = [FALLBACK_COVER_URL]
     
+    # Iterate over the hierarchy: parent_page -> databases -> pages.
     for parent in pages_data.get("parent_page", []):
-        for page in parent.get("pages", []):
-            current_cover = page.get("cover", "")
-            if "github.com/suhailphotos/notionUtils/blob/main/assets/media/banner/" in current_cover:
+        for database in parent.get("databases", []):
+            for page in database.get("pages", []):
+                current_cover = page.get("cover")
+                if not current_cover:
+                    print(f"Page {page['page_id']} has no cover; skipping.")
+                    continue
+                # Expecting old GitHub URLs.
+                expected_pattern = "github.com/suhailphotos/notionUtils/blob/main/assets/media/banner/"
+                if expected_pattern not in current_cover:
+                    print(f"Page {page['page_id']} cover is not an old GitHub URL; skipping.")
+                    continue
                 file_name = Path(current_cover.split("/")[-1].split("?")[0]).name
                 new_url = cover_mapping.get(file_name)
                 if not new_url:
@@ -127,8 +145,6 @@ def update_notion_covers(notion_api_key: str, notion_db_pages_path: str, cover_n
                         print(f"Failed to update page {page['page_id']}: {e}")
                 else:
                     print(f"No new URL found for file {file_name} and no fallback available.")
-            else:
-                print(f"Page {page['page_id']} cover is not an old GitHub URL; skipping.")
     print("Notion cover pages update complete.")
 
 if __name__ == "__main__":
@@ -142,12 +158,12 @@ if __name__ == "__main__":
     
     # File paths (adjust as needed)
     cover_file_name_path = "cover_file_name.json"   # Mapping of old file names to new file names.
-    cover_names_path = "cover_images.json"           # Contains cover entries with keys: file_name, current_url, new_url, tags, etc.
-    notion_db_pages_path = "notion_db_pages.json"     # Contains Notion page info with cover URLs.
+    cover_names_path = "cover_images.json"           # JSON file listing cover entries (must include keys: file_name, current_url, new_url, and optionally tags).
+    notion_db_pages_path = "notion_db_pages_copy.json"     # JSON file listing workspace pages with cover URLs.
     
     notion_api_key = os.getenv("NOTION_API_KEY")
     
-    # Step 1: Pull cover images from the Cover Images database (for debugging/verification).
+    # Step 1: (Optional) Pull cover images from the Cover Images database.
     cover_images = get_cover_images(notion_api_key, os.getenv("NOTION_COVER_DATABASE_ID"))
     print(f"Retrieved {len(cover_images)} cover images from Notion Cover Images database.")
     
