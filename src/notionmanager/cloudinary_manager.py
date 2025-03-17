@@ -145,7 +145,7 @@ class CloudinaryManager:
             elif prod_env_path.exists():
                 load_dotenv(prod_env_path)
             notion_api_key = notion_api_key or os.getenv("NOTION_API_KEY")
-            notion_database_id = notion_database_id or os.getenv("NOTION_DATABASE_ID")
+            notion_database_id = notion_database_id or os.getenv("NOTION_COVER_DATABASE_ID")
             if not notion_api_key or not notion_database_id:
                 raise ValueError("Notion API credentials missing.")
 
