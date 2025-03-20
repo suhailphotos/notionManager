@@ -136,10 +136,7 @@ class CloudinaryManager:
         Must define "display_name" in Cloudinary as a custom structured metadata field.
         """
         try:
-            cloudinary.uploader.update_metadata(
-                {"display_name": display_name},
-                public_ids=[public_id]
-            )
+            result = cloudinary.api.update(public_id, display_name=display_name)
             print(f"Set display_name='{display_name}' on public_id={public_id}")
         except Exception as e:
             print(f"Failed to set display_name: {e}")
@@ -211,6 +208,9 @@ class CloudinaryManager:
                     file_info["name"] = display_name  # Update Notion title.
                     sync_backend.update_entry(file_info, existing_entry)
     
+                    # IMPORTANT: update the in-memory entry so it's not seen as "missing" later.
+                    existing_entry["path"] = file_info["raw_path"]
+    
                 else:
                     # UPDATE: File name is the same; check if source path or tags changed.
                     existing_tags = existing_entry.get("tags", [])
@@ -227,6 +227,9 @@ class CloudinaryManager:
                         file_info["name"] = display_name
                         sync_backend.update_entry(file_info, existing_entry)
                         print(f"[CloudinaryManager] Updated entry for {file_info['file_name']}")
+    
+                        # Also update the in-memory entry (path, etc.).
+                        existing_entry["path"] = file_info["raw_path"]
                     else:
                         print(f"[CloudinaryManager] No change for {file_info['file_name']}")
     
@@ -241,7 +244,7 @@ class CloudinaryManager:
                         break
     
                 if matching_entry:
-                    # CONTENT CHANGED: File content has changed (hash updated) but name remains same.
+                    # CONTENT CHANGED: Same name, but different (new) hash.
                     print(f"Content change detected for {file_info['file_name']}")
                     old_cloud_url = matching_entry.get("image_url", "")
                     old_public_id = self._extract_public_id(old_cloud_url)
@@ -254,20 +257,21 @@ class CloudinaryManager:
                             print("Error deleting old asset:", destroy_resp)
                     except Exception as e:
                         print("Failed to delete old asset:", e)
+    
                     # Re-upload new version.
                     reup_resp = self.upload_file(file_info, root_category)
                     new_url = reup_resp["secure_url"]
-                    # Create the transformed URL.
                     transformed_url = create_new_url(new_url)
-                    # Assign the transformed URL to both image_url and cover.
                     file_info["image_url"] = transformed_url
                     file_info["cover"] = {"type": "external", "external": {"url": transformed_url}}
-                    # Update the file hash in file_info to the new hash.
                     file_info["hash"] = file_hash
                     self._update_display_name(reup_resp["public_id"], display_name)
-                    # Update Notion title.
                     file_info["name"] = display_name
                     sync_backend.update_entry(file_info, matching_entry)
+    
+                    # Update matching_entry so it won't get deleted in the final step.
+                    matching_entry["path"] = file_info["raw_path"]
+                    matching_entry["hash"] = file_info["hash"]
                 else:
                     # NEW FILE: No matching file name; treat as a completely new file.
                     upload_resp = self.upload_file(file_info, root_category)
@@ -306,6 +310,7 @@ class CloudinaryManager:
                     print("[CloudinaryManager] Failed to delete asset:", e)
     
         print("[CloudinaryManager] Sync complete.")
+
 
 # -------------------------------------------------------------------
 # Main: Reading `sync_config.json` and Running Sync Jobs
