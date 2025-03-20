@@ -182,45 +182,22 @@ class CloudinaryManager:
             # Ensure that the "path" field is set to the raw_path (source file path).
             file_info["path"] = file_info["raw_path"]
     
-            if file_hash not in existing_entries:
-                # NEW FILE: Upload to Cloudinary.
-                upload_resp = self.upload_file(file_info, root_category)
-                original_url = upload_resp["secure_url"]
-                self._update_display_name(upload_resp["public_id"], display_name)
-                # Create a transformed URL (e.g., with desired transformations) for Notion.
-                transformed_url = create_new_url(original_url)
-                # Set the fields that Notion will use.
-                file_info["image_url"] = transformed_url
-                file_info["cover"] = {"type": "external", "external": {"url": transformed_url}}
-                file_info["name"] = display_name  # For Notion page title.
-                # Use the default icon from the Notion config (if this is a Notion backend).
-                if isinstance(sync_backend, NotionSyncBackend):
-                    default_icon = sync_backend.notion_db_config.default_icon or {}
-                    if default_icon:
-                        file_info["icon"] = default_icon
-    
-                # Create the new entry in the backend.
-                sync_backend.create_entry(file_info)
-                print(f"[CloudinaryManager] Created new entry for {file_info['file_name']}")
-    
-            else:
-                # EXISTING FILE: Check if we need to rename or update.
+            if file_hash in existing_entries:
+                # EXISTING FILE: file hash matches an existing record.
                 existing_entry = existing_entries[file_hash]
-                # Expand environment variables in the stored "path" to get the actual file name.
+                # Expand stored path to get the file name.
                 stored_file_name = Path(os.path.expandvars(existing_entry.get("path", ""))).name
     
-                if stored_file_name != file_info["file_name"]:
+                if stored_file_name.lower() != file_info["file_name"].lower():
                     # RENAME: The file name has changed.
                     old_cloud_url = existing_entry.get("image_url", "")
                     old_public_id = self._extract_public_id(old_cloud_url)
-                    # Derive new public ID from the scanned file name (lower-case stem)
                     new_public_id = f"{root_category}/{Path(file_info['file_name']).stem.lower()}"
                     try:
                         rename_resp = cloudinary.uploader.rename(old_public_id, new_public_id)
                         print(f"Renamed Cloudinary asset {old_public_id} -> {new_public_id}")
                         resource_info = cloudinary.api.resource(new_public_id)
                         new_url = resource_info["secure_url"]
-                        # Use a transformed version of the new URL.
                         file_info["image_url"] = create_new_url(new_url)
                     except Exception as e:
                         print("[CloudinaryManager] rename failed:", e)
@@ -230,13 +207,12 @@ class CloudinaryManager:
                         file_info["image_url"] = create_new_url(new_url)
                         new_public_id = rename_resp["public_id"]
     
-                    # Update Cloudinary metadata with the correct display name.
                     self._update_display_name(new_public_id, display_name)
-                    file_info["name"] = display_name
+                    file_info["name"] = display_name  # Update Notion title.
                     sync_backend.update_entry(file_info, existing_entry)
     
                 else:
-                    # UPDATE: Check if the source path or tags have changed.
+                    # UPDATE: File name is the same; check if source path or tags changed.
                     existing_tags = existing_entry.get("tags", [])
                     stored_path = os.path.expandvars(existing_entry.get("path", ""))
                     scanned_path = os.path.expandvars(file_info["raw_path"])
@@ -247,14 +223,76 @@ class CloudinaryManager:
                         new_url = reup_resp["secure_url"]
                         file_info["image_url"] = create_new_url(new_url)
                         self._update_display_name(reup_resp["public_id"], display_name)
+                        # Update Notion title, if needed.
+                        file_info["name"] = display_name
                         sync_backend.update_entry(file_info, existing_entry)
                         print(f"[CloudinaryManager] Updated entry for {file_info['file_name']}")
                     else:
                         print(f"[CloudinaryManager] No change for {file_info['file_name']}")
     
+            else:
+                # NEW HASH: No matching entry by file hash.
+                # Check if a file with the same name already exists (i.e. content changed).
+                matching_entry = None
+                for entry in existing_entries.values():
+                    existing_name = Path(os.path.expandvars(entry.get("path", ""))).name
+                    if existing_name.lower() == file_info["file_name"].lower():
+                        matching_entry = entry
+                        break
+    
+                if matching_entry:
+                    # CONTENT CHANGED: File content has changed (hash updated) but name remains same.
+                    print(f"Content change detected for {file_info['file_name']}")
+                    old_cloud_url = matching_entry.get("image_url", "")
+                    old_public_id = self._extract_public_id(old_cloud_url)
+                    try:
+                        # Delete the old asset.
+                        destroy_resp = cloudinary.uploader.destroy(old_public_id)
+                        if destroy_resp.get("result") == "ok":
+                            print(f"Deleted old Cloudinary asset {old_public_id}")
+                        else:
+                            print("Error deleting old asset:", destroy_resp)
+                    except Exception as e:
+                        print("Failed to delete old asset:", e)
+                    # Re-upload new version.
+                    reup_resp = self.upload_file(file_info, root_category)
+                    new_url = reup_resp["secure_url"]
+                    # Create the transformed URL.
+                    transformed_url = create_new_url(new_url)
+                    # Assign the transformed URL to both image_url and cover.
+                    file_info["image_url"] = transformed_url
+                    file_info["cover"] = {"type": "external", "external": {"url": transformed_url}}
+                    # Update the file hash in file_info to the new hash.
+                    file_info["hash"] = file_hash
+                    self._update_display_name(reup_resp["public_id"], display_name)
+                    # Update Notion title.
+                    file_info["name"] = display_name
+                    sync_backend.update_entry(file_info, matching_entry)
+                else:
+                    # NEW FILE: No matching file name; treat as a completely new file.
+                    upload_resp = self.upload_file(file_info, root_category)
+                    original_url = upload_resp["secure_url"]
+                    self._update_display_name(upload_resp["public_id"], display_name)
+                    transformed_url = create_new_url(original_url)
+                    file_info["image_url"] = transformed_url
+                    file_info["cover"] = {"type": "external", "external": {"url": transformed_url}}
+                    file_info["name"] = display_name
+                    if isinstance(sync_backend, NotionSyncBackend):
+                        default_icon = sync_backend.notion_db_config.default_icon or {}
+                        if default_icon:
+                            file_info["icon"] = default_icon
+                    sync_backend.create_entry(file_info)
+                    print(f"[CloudinaryManager] Created new entry for {file_info['file_name']}")
+    
         # --- Process Deletions ---
         for file_hash, existing_entry in existing_entries.items():
-            if file_hash not in scanned_by_hash:
+            # If an existing entry's file name is not present in the scanned files, delete it.
+            found = False
+            for f in scanned_files:
+                if Path(os.path.expandvars(existing_entry.get("path", ""))).name.lower() == f["file_name"].lower():
+                    found = True
+                    break
+            if not found:
                 old_cloud_url = existing_entry.get("image_url", "")
                 public_id = self._extract_public_id(old_cloud_url)
                 sync_backend.delete_entry(existing_entry)
@@ -268,7 +306,6 @@ class CloudinaryManager:
                     print("[CloudinaryManager] Failed to delete asset:", e)
     
         print("[CloudinaryManager] Sync complete.")
-
 
 # -------------------------------------------------------------------
 # Main: Reading `sync_config.json` and Running Sync Jobs

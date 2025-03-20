@@ -99,6 +99,16 @@ class NotionManager:
         payload = {"properties": properties}
         return self.api.update_page(page_id, payload)
 
+    def update_cover(self, page_id, cover_payload):
+        """Update the cover of a Notion page."""
+        payload = {"cover": cover_payload}
+        return self.api.update_page(page_id, payload)
+
+    def update_icon(self, page_id, icon_payload):
+        """Update the icon of a Notion page."""
+        payload = {"icon": icon_payload}
+        return self.api.update_page(page_id, payload)
+
     def delete_page(self, page_id):
         # Mark the page as archived.
         payload = {"archived": True}

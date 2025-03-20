@@ -178,15 +178,33 @@ class NotionSyncBackend(BaseSyncBackend):
         print(f"[NotionSyncBackend] Created Notion page for {file_info.get('file_name')}")
 
     def update_entry(self, file_info: dict, existing_entry: dict):
+        # Build the flat object using our back mapping.
         flat_object = self._build_flat_object_for_update(file_info, existing_entry)
+        # Build the full payload using our reverse mapping.
         notion_payload = self.notion_manager.build_notion_payload(
             flat_object,
             self.notion_db_config.back_mapping
         )
-        update_props = notion_payload["properties"]
         page_id = existing_entry.get("id")
-        self.notion_manager.update_page(page_id, update_props)
-        print(f"[NotionSyncBackend] Updated Notion page for {file_info.get('file_name')}")
+        
+        # Update properties:
+        # Extract only the "properties" part from the payload.
+        properties = notion_payload.get("properties", {})
+        self.notion_manager.update_page(page_id, properties)
+        print(f"[NotionSyncBackend] Updated properties for {file_info.get('file_name')}")
+        
+        # Update cover if provided.
+        if "cover" in flat_object:
+            cover_payload = flat_object["cover"]
+            self.notion_manager.update_cover(page_id, cover_payload)
+            print(f"[NotionSyncBackend] Updated cover for {file_info.get('file_name')}")
+        
+        # Update icon if provided.
+        if "icon" in flat_object:
+            icon_payload = flat_object["icon"]
+            self.notion_manager.update_icon(page_id, icon_payload)
+            print(f"[NotionSyncBackend] Updated icon for {file_info.get('file_name')}")
+
 
     def delete_entry(self, existing_entry: dict):
         page_id = existing_entry.get("id")
