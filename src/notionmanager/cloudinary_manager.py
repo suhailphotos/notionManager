@@ -176,15 +176,24 @@ class CloudinaryManager:
             # Build a display name by replacing underscores with spaces and title-casing.
             display_name = Path(file_info["file_name"]).stem.replace("_", " ").title()
             file_info["display_name"] = display_name
-            # Ensure that the "path" field is set to the raw_path (source file path).
+            # Set the "path" field to the raw_path (source file path).
             file_info["path"] = file_info["raw_path"]
     
             if file_hash in existing_entries:
                 # EXISTING FILE: file hash matches an existing record.
                 existing_entry = existing_entries[file_hash]
-                # Expand stored path to get the file name.
-                stored_file_name = Path(os.path.expandvars(existing_entry.get("path", ""))).name
     
+                # For JSON backend, use stored "file_name" and "raw_path" directly.
+                if isinstance(sync_backend, LocalJsonSyncBackend):
+                    stored_file_name = existing_entry.get("file_name", "")
+                    stored_path = existing_entry.get("raw_path", "")
+                    scanned_path = file_info["raw_path"]
+                else:
+                    stored_file_name = Path(os.path.expandvars(existing_entry.get("path", ""))).name
+                    stored_path = os.path.expandvars(existing_entry.get("path", ""))
+                    scanned_path = os.path.expandvars(file_info["raw_path"])
+    
+                # Check if the file name has changed.
                 if stored_file_name.lower() != file_info["file_name"].lower():
                     # RENAME: The file name has changed.
                     old_cloud_url = existing_entry.get("image_url", "")
@@ -207,39 +216,50 @@ class CloudinaryManager:
                     self._update_display_name(new_public_id, display_name)
                     file_info["name"] = display_name  # Update Notion title.
                     sync_backend.update_entry(file_info, existing_entry)
-    
-                    # IMPORTANT: update the in-memory entry so it's not seen as "missing" later.
-                    existing_entry["path"] = file_info["raw_path"]
+                    # Update the in-memory entry.
+                    if isinstance(sync_backend, LocalJsonSyncBackend):
+                        existing_entry["raw_path"] = file_info["raw_path"]
+                        existing_entry["file_name"] = file_info["file_name"]
+                    else:
+                        existing_entry["path"] = file_info["raw_path"]
     
                 else:
-                    # UPDATE: File name is the same; check if source path or tags changed.
+                    # UPDATE: File name is the same; check if the source path or tags changed.
                     existing_tags = existing_entry.get("tags", [])
-                    stored_path = os.path.expandvars(existing_entry.get("path", ""))
-                    scanned_path = os.path.expandvars(file_info["raw_path"])
-                    path_changed = (scanned_path != stored_path)
+                    if isinstance(sync_backend, LocalJsonSyncBackend):
+                        path_changed = (file_info["raw_path"] != existing_entry.get("raw_path", ""))
+                    else:
+                        stored_path = os.path.expandvars(existing_entry.get("path", ""))
+                        scanned_path = os.path.expandvars(file_info["raw_path"])
+                        path_changed = (scanned_path != stored_path)
                     tags_changed = (update_tags and existing_tags != file_info["tags"])
+    
                     if path_changed or tags_changed:
                         reup_resp = self.upload_file(file_info, root_category)
                         new_url = reup_resp["secure_url"]
                         file_info["image_url"] = create_new_url(new_url)
                         self._update_display_name(reup_resp["public_id"], display_name)
-                        # Update Notion title, if needed.
                         file_info["name"] = display_name
                         sync_backend.update_entry(file_info, existing_entry)
                         print(f"[CloudinaryManager] Updated entry for {file_info['file_name']}")
-    
-                        # Also update the in-memory entry (path, etc.).
-                        existing_entry["path"] = file_info["raw_path"]
+                        if isinstance(sync_backend, LocalJsonSyncBackend):
+                            existing_entry["raw_path"] = file_info["raw_path"]
+                        else:
+                            existing_entry["path"] = file_info["raw_path"]
                     else:
                         print(f"[CloudinaryManager] No change for {file_info['file_name']}")
     
             else:
                 # NEW HASH: No matching entry by file hash.
-                # Check if a file with the same name already exists (i.e. content changed).
+                # Check if a file with the same name already exists (i.e., content changed).
                 matching_entry = None
                 for entry in existing_entries.values():
-                    existing_name = Path(os.path.expandvars(entry.get("path", ""))).name
-                    if existing_name.lower() == file_info["file_name"].lower():
+                    if isinstance(sync_backend, LocalJsonSyncBackend):
+                        existing_name = entry.get("file_name", "")
+                    else:
+                        existing_name = Path(os.path.expandvars(entry.get("path", ""))).name.lower()
+                    if (isinstance(sync_backend, LocalJsonSyncBackend) and existing_name == file_info["file_name"]) or \
+                       (not isinstance(sync_backend, LocalJsonSyncBackend) and existing_name == file_info["file_name"].lower()):
                         matching_entry = entry
                         break
     
@@ -249,7 +269,6 @@ class CloudinaryManager:
                     old_cloud_url = matching_entry.get("image_url", "")
                     old_public_id = self._extract_public_id(old_cloud_url)
                     try:
-                        # Delete the old asset.
                         destroy_resp = cloudinary.uploader.destroy(old_public_id)
                         if destroy_resp.get("result") == "ok":
                             print(f"Deleted old Cloudinary asset {old_public_id}")
@@ -258,7 +277,6 @@ class CloudinaryManager:
                     except Exception as e:
                         print("Failed to delete old asset:", e)
     
-                    # Re-upload new version.
                     reup_resp = self.upload_file(file_info, root_category)
                     new_url = reup_resp["secure_url"]
                     transformed_url = create_new_url(new_url)
@@ -268,12 +286,14 @@ class CloudinaryManager:
                     self._update_display_name(reup_resp["public_id"], display_name)
                     file_info["name"] = display_name
                     sync_backend.update_entry(file_info, matching_entry)
+                    if isinstance(sync_backend, LocalJsonSyncBackend):
+                        matching_entry["raw_path"] = file_info["raw_path"]
+                        matching_entry["hash"] = file_info["hash"]
+                    else:
+                        matching_entry["path"] = file_info["raw_path"]
     
-                    # Update matching_entry so it won't get deleted in the final step.
-                    matching_entry["path"] = file_info["raw_path"]
-                    matching_entry["hash"] = file_info["hash"]
                 else:
-                    # NEW FILE: No matching file name; treat as a completely new file.
+                    # NEW FILE: Completely new file.
                     upload_resp = self.upload_file(file_info, root_category)
                     original_url = upload_resp["secure_url"]
                     self._update_display_name(upload_resp["public_id"], display_name)
@@ -289,11 +309,16 @@ class CloudinaryManager:
                     print(f"[CloudinaryManager] Created new entry for {file_info['file_name']}")
     
         # --- Process Deletions ---
-        for file_hash, existing_entry in existing_entries.items():
-            # If an existing entry's file name is not present in the scanned files, delete it.
+        # Iterate over a copy of the items to avoid modifying the dictionary during iteration.
+        for file_hash, existing_entry in list(existing_entries.items()):
+            if isinstance(sync_backend, LocalJsonSyncBackend):
+                stored_name = existing_entry.get("file_name", "").lower()
+            else:
+                stored_name = Path(os.path.expandvars(existing_entry.get("path", ""))).name.lower()
+    
             found = False
             for f in scanned_files:
-                if Path(os.path.expandvars(existing_entry.get("path", ""))).name.lower() == f["file_name"].lower():
+                if stored_name == f["file_name"].lower():
                     found = True
                     break
             if not found:
