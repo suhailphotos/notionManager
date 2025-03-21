@@ -10,6 +10,12 @@ from dotenv import load_dotenv
 from typing import List, Optional, Dict, Any
 
 # -------------------------------------------------------------------
+# Utils
+# -------------------------------------------------------------------
+
+from notionmanager.utils import hide_file
+
+# -------------------------------------------------------------------
 # NotionManager
 # -------------------------------------------------------------------
 
@@ -228,6 +234,8 @@ class LocalJsonSyncBackend(BaseSyncBackend):
     def _save_data(self):
         with open(self.json_file_path, "w", encoding="utf-8") as f:
             json.dump(self._data, f, indent=2)
+
+        hide_file(self.json_file_path)
 
     def fetch_existing_entries(self) -> Dict[str, dict]:
         return self._data

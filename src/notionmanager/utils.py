@@ -1,10 +1,13 @@
 import os
+import sys
+import ctypes
 import re
 import hashlib
 import json, csv
 import pickle
 import time
 import shutil
+import subprocess
 from pathlib import Path
 from urllib.parse import urlparse
 from typing import List, Optional, Tuple, Any
@@ -440,6 +443,31 @@ def move_unused_banner_files(json_file_path, banner_folder, archive_folder):
 
     print(f"✅ Completed! {len(unused_files)} unused files moved to {archive_folder}.")
 
+def hide_file(file_path: Path):
+    """
+    Hide file using OS-specific methods.
+    For Windows, sets the hidden attribute.
+    For macOS, uses 'chflags hidden'.
+    On Linux, there's no reliable programmatic method to hide a file
+    without renaming it (files are hidden only if their names begin with a dot).
+    """
+    if os.name == 'nt':  # Windows
+        FILE_ATTRIBUTE_HIDDEN = 0x02
+        ret = ctypes.windll.kernel32.SetFileAttributesW(str(file_path), FILE_ATTRIBUTE_HIDDEN)
+        if not ret:
+            print(f"Failed to hide file {file_path} on Windows")
+    elif sys.platform == 'darwin':  # macOS
+        # Use 'chflags hidden' to mark the file as hidden on macOS
+        try:
+            subprocess.run(['chflags', 'hidden', str(file_path)], check=True)
+        except subprocess.CalledProcessError:
+            print(f"Failed to hide file {file_path} on macOS")
+    else:
+        # On Linux, files are hidden only if they start with a dot.
+        # If you need the same filename, there's no standard method to hide it.
+        print("On Linux, a file is only hidden if its name begins with a dot. "
+              "No cross-platform programmatic method is available without renaming.")
+
 
 # ===================== TEST SECTION =====================
 
@@ -623,3 +651,6 @@ if __name__ == '__main__':
 #        "cover_file_name_merged.json",     # Path to your cover_file_name_merged.json
 #        "cover_images_merged.json"         # Output path for the merged JSON
 #    )
+
+    log_json_path = Path("/Users/suhail/Library/CloudStorage/Dropbox/pictures/assets/icon/sync_log.json")
+    hide_file(log_json_path)

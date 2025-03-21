@@ -36,8 +36,8 @@
       }
     },
     {
-      "name": "gicon",
-      "path": "$DROPBOX/pictures/assets/gIcon",
+      "name": "icon",
+      "path": "$DROPBOX/pictures/assets/icon",
       "method": {
         "type": "jsonlog",
         "jsonlog": {
