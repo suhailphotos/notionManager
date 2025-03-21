@@ -1,5 +1,5 @@
 
-# NotionUtils: A Comprehensive Toolkit for Notion
+# Notion Manager: A Comprehensive Toolkit for Notion
 
 Welcome to **NotionUtils**, your all-in-one utility toolkit designed to elevate your productivity and streamline your workflow within Notion. Whether you’re managing personal projects or organizing complex databases, NotionUtils provides powerful tools and features to automate tasks, simplify integrations, and optimize your Notion experience.
 
