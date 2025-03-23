@@ -16,10 +16,10 @@ def load_sync_config() -> dict:
     prod_config_path = Path.home() / ".notionmanager" / "sync_config.json"
 
     config_path = None
-    if dev_config_path.exists():
-        config_path = dev_config_path
-    elif prod_config_path.exists():
+    if prod_config_path.exists():
         config_path = prod_config_path
+    elif dev_config_path.exists():
+        config_path = dev_config_path
     
     if not config_path:
         raise FileNotFoundError("sync_config.json not found in dev or prod paths.")

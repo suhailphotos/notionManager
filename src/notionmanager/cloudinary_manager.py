@@ -4,6 +4,7 @@ import json
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+import cloudinary.utils
 
 from pathlib import Path
 from dotenv import load_dotenv
@@ -90,6 +91,14 @@ class CloudinaryManager:
         except Exception as e:
             print(f"Error extracting public_id: {e}")
             return ""
+
+    def get_asset_url(self, public_id: str, **options) -> str:
+        """
+        Generate a secure URL for the given asset public_id using Cloudinary's URL generation.
+        Additional transformation options can be passed via **options.
+        """
+        url, _ = cloudinary.utils.cloudinary_url(public_id, secure=True, **options)
+        return url
 
     def scan_folder(self, folder_path: str, root_category: str,
                     skip_files: Optional[List[str]] = None) -> List[dict]:

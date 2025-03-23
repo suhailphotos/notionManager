@@ -46,6 +46,18 @@
           "log_path": ""
         }
       }
+    },
+    {
+      "name": "poster",
+      "path": "$DROPBOX/pictures/assets/poster",
+      "method": {
+        "type": "jsonlog",
+        "jsonlog": {
+          "file_name": "sync_log.json",
+          "in_folder": true,
+          "log_path": ""
+        }
+      }
     }
   ]
 }
