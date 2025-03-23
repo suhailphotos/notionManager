@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "notionmanager"
-version = "0.1.14"
+version = "0.1.15"
 description = "A Python package for managing courses, projects, and directories with Notion integration."
 authors = ["Suhail <suhailece@gmail.com>"]
 readme = "README.md"
