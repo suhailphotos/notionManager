@@ -253,13 +253,26 @@ class LocalJsonSyncBackend(BaseSyncBackend):
         print(f"[LocalJsonSyncBackend] Created entry for {file_info['file_name']}")
 
     def update_entry(self, file_info: dict, existing_entry: dict):
-        record = self._data[file_info["hash"]]
+        old_hash = existing_entry["hash"]          # hash stored in the log
+        new_hash = file_info["hash"]               # current (possibly new) hash
+    
+        # 1. Fetch the existing record using the OLD hash
+        record = self._data.pop(old_hash, {})      # safely remove; returns {} if missing
+    
+        # 2. Update / replace fields
         record.update({
+            "id": new_hash,                        # keep id in‑sync with hash
             "file_name": file_info["file_name"],
             "raw_path": file_info["raw_path"],
             "image_url": file_info.get("image_url"),
-            "tags": file_info.get("tags", [])
+            "tags": file_info.get("tags", []),
+            "hash": new_hash
         })
+    
+        # 3. Re‑insert under the NEW hash key
+        self._data[new_hash] = record
+    
+        # 4. Persist to disk
         self._save_data()
         print(f"[LocalJsonSyncBackend] Updated entry for {file_info['file_name']}")
 
