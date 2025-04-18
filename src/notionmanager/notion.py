@@ -173,6 +173,12 @@ class NotionManager:
                         transformed[target_key] = select_obj.get("name") if select_obj else None
                     else:
                         transformed[target_key] = str(raw)
+                elif ret_type == "boolean":
+                    # Handle checkbox properties as booleans
+                    if prop_type == "checkbox":
+                        transformed[target_key] = raw.get("checkbox", False)
+                    else:
+                        transformed[target_key] = bool(raw)
                 elif ret_type == "list":
                     if prop_type == "relation":
                         # Return a list of relation IDs.
@@ -406,6 +412,11 @@ class NotionManager:
                 prop_payload = {"type": "multi_select", "multi_select": multi}
                 if property_id:
                     prop_payload["id"] = property_id
+            elif prop_type == "checkbox":
+                # Build payload for checkbox properties
+                prop_payload = {"type": "checkbox", "checkbox": bool(value)}
+                if property_id:
+                    prop_payload["id"] = property_id
             else:
                 # Fallback to rich_text.
                 text_item = {
@@ -476,7 +487,8 @@ if __name__ == "__main__":
             "Course Link": {"target": "link", "type": "url", "return": "str"},
             "Path": {"target": "path", "type": "rich_text", "return": "str"},
             "Template": {"target": "template", "type": "rich_text", "return": "str"},
-            "Tags": {"target": "tags", "type": "multi_select", "return": "list"}
+            "Tags": {"target": "tags", "type": "multi_select", "return": "list"},
+            "Video": {"target": "video", "type": "checkbox", "return": "boolean"}
         }
 
         # Example back-transformation mapping.
@@ -490,7 +502,8 @@ if __name__ == "__main__":
             "link": {"target": "Course Link", "type": "url", "return": "str", "property_id": "O%3AZR"},
             "path": {"target": "Path", "type": "rich_text", "return": "str", "property_id": "%3Eua%3C", "code": True},
             "template": {"target": "Template", "type": "rich_text", "return": "str", "property_id": "NBdS", "code": True},
-            "tags": {"target": "Tags", "type": "multi_select", "return": "list", "property_id": "tWcF"}
+            "tags": {"target": "Tags", "type": "multi_select", "return": "list", "property_id": "tWcF"},
+            "video": {"target": "Video", "type":"checkbox", "return": "boolean"}
         }
 
         # Retrieve pages based on the filter.
