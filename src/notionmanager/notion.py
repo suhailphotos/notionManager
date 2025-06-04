@@ -161,7 +161,11 @@ class NotionManager:
                     # Return the entire raw property.
                     transformed[target_key] = raw
                 elif ret_type == "str":
-                    if prop_type in ("rich_text", "title"):
+                    if prop_type == "status":
+                        # Extract the name of the status option
+                        st = raw.get("status", {})
+                        transformed[target_key] = st.get("name")
+                    elif prop_type in ("rich_text", "title"):
                         # Notion may split text into multiple pieces; join them.
                         items = raw.get(prop_type, [])
                         joined = "".join(item.get("plain_text", "") for item in items)
@@ -417,6 +421,14 @@ class NotionManager:
                 prop_payload = {"type": "checkbox", "checkbox": bool(value)}
                 if property_id:
                     prop_payload["id"] = property_id
+            elif prop_type == "status":
+                # Build payload for status properties
+                prop_payload = {
+                    "type": "status",
+                    "status": {"name": value}
+                }
+                if property_id:
+                    prop_payload["id"] = property_id
             else:
                 # Fallback to rich_text.
                 text_item = {
@@ -443,37 +455,20 @@ class NotionManager:
 
 
 if __name__ == "__main__":
-    from oauthmanager import OnePasswordAuthManager
+    import os
     import json
+    from oauthmanager import OnePasswordAuthManager
 
-    # Retrieve Notion API key using OnePasswordAuthManager
-    auth_manager = OnePasswordAuthManager(vault_name="API Keys")
-    notion_creds = auth_manager.get_credentials("Quantum", "credential")
-    NOTION_API_KEY = notion_creds.get("credential")
+    def load_notion_credentials():
+        # Retrieve Notion API key using OnePasswordAuthManager
+        auth_manager = OnePasswordAuthManager(vault_name="API Keys")
+        notion_creds = auth_manager.get_credentials("Quantum", "credential")
+        return notion_creds.get("credential")
 
-    # Notion Database ID
-    DATABASE_ID = "195a1865-b187-8103-9b6a-cc752ca45874"
+    def load_course_database_info():
 
-    if NOTION_API_KEY:
-        # Initialize NotionManager
-        manager = NotionManager(api_key=NOTION_API_KEY, database_id=DATABASE_ID)
-        filter = {
-            "filter": {
-                "or": [
-                    {"property": "Name", "title": {"equals": "Sample Course A"}},
-                    {"property": "Name", "title": {"equals": "Sample Chapter A"}},
-                    {"property": "Name", "title": {"equals": "Sample Lesson A"}},
-                    {"property": "Name", "title": {"equals": "Sample Lesson B"}}
-                ]
-            }
-        }
-
-        # Example hierarchy configuration for a three-level structure.
-        hierarchy_config = {
-            "root": "courses",       # Top-level key for courses (level 0)
-            "level_1": "chapters",     # Children of courses are chapters (level 1)
-            "level_2": "lessons"       # Children of chapters are lessons (level 2)
-        }
+        # Notion Database ID
+        DATABASE_ID = "195a1865-b187-8103-9b6a-cc752ca45874"
 
         # Example properties mapping for forward transformation.
         properties_mapping = {
@@ -485,10 +480,14 @@ if __name__ == "__main__":
             "Type": {"target": "type", "type": "select", "return": "list"},
             "Course Description": {"target": "description", "type": "rich_text", "return": "str"},
             "Course Link": {"target": "link", "type": "url", "return": "str"},
+            "Instructor": {"target": "instructor", "type": "select", "return": "list"},
+            "Institute": {"target":"institute", "type":"select", "return":"list"},
             "Path": {"target": "path", "type": "rich_text", "return": "str"},
-            "Template": {"target": "template", "type": "rich_text", "return": "str"},
+            "Template": {"target": "template", "type": "rich_text", "return": "str", "default": "default"},
             "Tags": {"target": "tags", "type": "multi_select", "return": "list"},
-            "Video": {"target": "video", "type": "checkbox", "return": "boolean"}
+            "Status": {"target": "status",     "type": "status",    "return": "str"},
+            "Video": {"target": "video", "type": "checkbox", "return": "boolean"},
+            "Video Path": {"target": "video_path", "type": "rich_text", "return": "str"}
         }
 
         # Example back-transformation mapping.
@@ -496,16 +495,46 @@ if __name__ == "__main__":
             "icon": {"target": "icon", "return": "object"},
             "cover": {"target": "cover", "return": "object"},
             "name": {"target": "Name", "type": "title", "return": "str"},
-            "tool": {"target": "Tool", "type": "relation", "return": "list", "property_id": "pvso"},
-            "type": {"target": "Type", "type": "select", "return": "list", "property_id": "DCuB"},
-            "description": {"target": "Course Description", "type": "rich_text", "return": "str", "property_id": "XQwN"},
-            "link": {"target": "Course Link", "type": "url", "return": "str", "property_id": "O%3AZR"},
-            "path": {"target": "Path", "type": "rich_text", "return": "str", "property_id": "%3Eua%3C", "code": True},
-            "template": {"target": "Template", "type": "rich_text", "return": "str", "property_id": "NBdS", "code": True},
-            "tags": {"target": "Tags", "type": "multi_select", "return": "list", "property_id": "tWcF"},
-            "video": {"target": "Video", "type":"checkbox", "return": "boolean"}
+            "tool": {"target": "Tool", "type": "relation", "return": "list", "default": ["149a1865-b187-80f9-b21f-c9c96430bf62"]},
+            "type": {"target": "Type", "type": "select", "return": "list"},
+            "description": {"target": "Course Description", "type": "rich_text", "return": "str"},
+            "link": {"target": "Course Link", "type": "url", "return": "str"},
+            "instructor": {"target": "Instructor", "type": "select", "return": "list"},
+            "institute": {"target":"Institute", "type":"select", "return":"list"},
+            "path": {"target": "Path", "type": "rich_text", "return": "str", "code": True},
+            "template": {"target": "Template", "type": "rich_text", "return": "str", "code": True},
+            "tags": {"target": "Tags", "type": "multi_select", "return": "list", "default": ["Python"]},
+            "status": {"target": "Status", "type": "status",    "return": "str", "default": "Not started"},
+            "video": {"target": "Video", "type": "checkbox", "return": "boolean"},
+            "video_path": {"target": "Video Path", "type": "rich_text", "return": "str", "code": True}
+        }
+        # Example hierarchy configuration for a three-level structure.
+        hierarchy_config = {
+            "root": "courses",       # Top-level key for courses (level 0)
+            "level_1": "chapters",     # Children of courses are chapters (level 1)
+            "level_2": "lessons"       # Children of chapters are lessons (level 2)
         }
 
+        return DATABASE_ID, properties_mapping, back_mapping, hierarchy_config
+
+    def test_page_transform_payload():
+        NOTION_API_KEY = load_notion_credentials()
+        DATABASE_ID, properties_mapping, back_mapping, hierarchy_config = load_course_database_info()
+
+        if NOTION_API_KEY:
+            # Initialize NotionManager
+            manager = NotionManager(api_key=NOTION_API_KEY, database_id=DATABASE_ID)
+
+        filter = {
+            "filter": {
+                "or": [
+                    {"property": "Name", "title": {"equals": "Machine Learning in VFX"}},
+                    {"property": "Name", "title": {"equals": "Week 2"}},
+                    {"property": "Name", "title": {"equals": "Data Intro"}},
+                    {"property": "Name", "title": {"equals": "Databases"}}
+                ]
+            }
+        }
         # Retrieve pages based on the filter.
         course_pages = manager.get_pages(**filter)
         if course_pages:
@@ -518,3 +547,44 @@ if __name__ == "__main__":
             print(json.dumps(notion_payload, indent=2))
         else:
             print("No pages retrieved.")
+
+    def test_add_lesson():
+        """
+        Load one lesson from the ml_3d_wk3_vfx.json payload and insert it into Notion
+        under the specified parent page ID, printing both the payload and the response.
+        """
+        NOTION_API_KEY = load_notion_credentials()
+        DATABASE_ID, properties_mapping, back_mapping, _ = load_course_database_info()
+
+        # Initialize manager
+        manager = NotionManager(api_key=NOTION_API_KEY, database_id=DATABASE_ID)
+
+        # Load sample payload file
+        payload_path = os.path.expanduser("~/.incept/payload/ml_3d_wk3_vfx.json")
+        with open(payload_path, "r") as f:
+            data = json.load(f)
+
+        # Grab the first lesson in week 3
+        lesson = data["courses"][0]["chapters"][0]["lessons"][0]
+        # Ensure a status is present
+        lesson.setdefault("status", "Not started")
+
+        # Build the Notion payload
+        notion_payload = manager.build_notion_payload(lesson, back_mapping)
+
+        # Attach as a sub-item under the given parent page
+        notion_payload.setdefault("properties", {})
+        notion_payload["properties"]["Parent item"] = {
+            "type": "relation",
+            "relation": [{"id": "1f8a1865-b187-8105-a17b-fa3a79898855"}]
+        }
+
+        # Print and send
+        print("=== Add Lesson Payload ===")
+        print(json.dumps(notion_payload, indent=2))
+        response = manager.add_page(notion_payload)
+        print("=== Add Lesson Response ===")
+        print(json.dumps(response, indent=2))
+
+    # test_page_transform_payload()
+    test_add_lesson()
