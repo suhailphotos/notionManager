@@ -175,6 +175,10 @@ class NotionManager:
                     elif prop_type == "select":
                         select_obj = raw.get("select")
                         transformed[target_key] = select_obj.get("name") if select_obj else None
+                    elif prop_type == "date":
+                        # Notion’s "date" object is { "date": { "start": "YYYY-MM-DD", … } }
+                        date_block = raw.get("date", {})
+                        transformed[target_key] = date_block.get("start")
                     else:
                         transformed[target_key] = str(raw)
                 elif ret_type == "boolean":
@@ -426,6 +430,19 @@ class NotionManager:
                 prop_payload = {
                     "type": "status",
                     "status": {"name": value}
+                }
+                if property_id:
+                    prop_payload["id"] = property_id
+            elif prop_type == "date":
+                # Expect `value` is a string "YYYY-MM-DD"
+                # Notion wants: { "type":"date", "date":{ "start": <value>, "end": null, "time_zone": null } }
+                prop_payload = {
+                    "type": "date",
+                    "date": {
+                        "start": str(value),
+                        "end": None,
+                        "time_zone": None
+                    }
                 }
                 if property_id:
                     prop_payload["id"] = property_id
