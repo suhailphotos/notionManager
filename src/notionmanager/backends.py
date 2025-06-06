@@ -119,6 +119,7 @@ class NotionSyncBackend(BaseSyncBackend):
     def fetch_existing_entries(self) -> Dict[str, dict]:
         return self._notion_pages
 
+
     def _build_flat_object_for_create(self, file_info: dict) -> dict:
         flat_object = {}
         # If the mapping expects an icon, then use file_info["icon"] if present;
