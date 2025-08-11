@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "notionmanager"
-version = "0.1.26"
+version = "0.1.27"
 description = "A Python package for managing courses, projects, and directories with Notion integration."
 authors = ["Suhail <suhailece@gmail.com>"]
 readme = "README.md"
@@ -10,7 +10,7 @@ packages = [{include = "notionmanager", from = "src"}]
 notionmanager = "notionmanager.cli:main"
 
 [tool.poetry.dependencies]
-python = "^3.11.7"
+python = ">=3.11,<4.0"
 requests = "^2.32.3"
 oauthmanager = "^0.1.1"
 notion-client = "^2.2.1"
